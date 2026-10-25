@@ -49,6 +49,7 @@ Lietuva Travel helps users plan trips to Lithuanian destinations (Vilnius, Kauna
 
 ## File Structure
 
+```text
 Lietuva-Travel/
 ├── index.php                 # Main application logic and HTML UI
 ├── src/
@@ -66,6 +67,8 @@ Lietuva-Travel/
 ├── img/
 │   └── favicon.svg           # Application icons
 └── README.md                 # This file
+
+```
 
 ## Setup Requirements
 
