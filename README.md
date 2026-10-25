@@ -1,6 +1,6 @@
-# Lietuva Travel v5.0
+# Lietuva Travel v6.2 (Graph Inductor Edition)
 
-A travel planning application that implements Category Theory concepts (Functors, Monads, Monoids) to build type-safe, composable travel itineraries.
+A travel planning application that implements Category Theory concepts (Free Category Graph Inductors, Functors, Monads, Monoids) to build type-safe, composable travel itineraries.
 
 ## Overview
 
@@ -10,97 +10,77 @@ Lietuva Travel helps users plan trips to Lithuanian destinations (Vilnius, Kauna
 
 - **Live Data Integration**: Real-time weather (Open-Meteo) and currency exchange rates (Frankfurter API)
 - **Category Theory Architecture**:
+  - Directed Graph & Free Category Inductors F(G)
   - Functors for data transformation
   - Option/Either Monads for error handling
   - Monoids for associative cost calculation
   - Natural Transformations for converting collections to options
-- **Interactive UI**: Select flights, hotels, and activities with real-time pricing
+- **Mathematical Verification**: Built-in test suite verifying 15/15 Category Theory laws.
+- **Interactive UI**: Select flights, hotels, and activities with real-time pricing and visual F(G) path traces.
 - **Validation Pipeline**: Step-by-step validation ensuring:
   - Flight availability and pricing
   - Hotel check-in time compatibility
   - Weather suitability for activities
   - Budget compliance
-- **Responsive Design**: Works on mobile and desktop devices
+- **Multilingual Support**: English, Spanish, and Lithuanian localizations.
 
 ## Category Theory Concepts Implemented
 
+### Free Category Inductor F(G) (Prof. Irus Grinis Model)
+- **Vertices Ob(F(G))**: Travel states (e.g., Origin Hub -> Destination Airport -> Hotel Check-in -> Activities).
+- **Morphisms Hom(u, v)**: Composable paths of directed travel edges. Ensures an itinerary is a connected, valid walk through the travel graph.
+
 ### Functors
-- `RouteList`: Maps functions over collections of travel options
-- Used for applying discounts to all providers simultaneously
+- `RouteList`: Maps functions over collections of travel options.
+- Used for applying discounts to all providers simultaneously.
 
 ### Monads
-- `Option`: Handles missing values (no flights/hotels available)
-- `Either`: Represents success/failure with error context
-- Used in the Kleisli pipeline for step-by-step itinerary building
+- `Option`: Handles missing values (no flights/hotels available).
+- `Either`: Represents success/failure with error context.
+- Used in the Kleisli pipeline for step-by-step itinerary building and short-circuiting invalid graph edges.
 
 ### Monoids
-- `TripMetrics`: Combines costs, durations, and points associatively
-- Used to aggregate activity costs regardless of grouping
+- `TripMetrics`: Combines costs, durations, and points associatively.
+- Used to aggregate activity costs and evaluate the strict monoidal functor over the induced graph path.
 
 ### Natural Transformations
-- `RouteList::pickCheapest()`: Converts a list of options to the best option
-- Used to select the cheapest flight/hotel from available choices
+- `RouteList::headOption()`: Converts a list of options to the best option.
+- Used to select the cheapest flight/hotel from available choices.
 
 ## File Structure
 
-```
-V5/
-├── index.php          # Main application logic and HTML
+Lietuva-Travel/
+├── index.php                 # Main application logic and HTML UI
+├── src/
+│   └── CategoryTheory.php    # Core categorical logic and Graph Inductors
+├── tests/
+│   └── category_laws_test.php# 15/15 Mathematical laws test suite
+├── lang/
+│   ├── en.php                # English translations
+│   ├── es.php                # Spanish translations
+│   └── lt.php                # Lithuanian translations
 ├── css/
-│   └── style.css      # All styling (extracted from inline)
+│   └── style.css             # Application styling
 ├── js/
-│   └── main.js        # JavaScript functions (extracted from inline)
-└── README.md          # This file
-```
+│   └── main.js               # Frontend interactions
+├── img/
+│   └── favicon.svg           # Application icons
+└── README.md                 # This file
 
 ## Setup Requirements
 
-- PHP 7.4+ with `allow_url_fopen` enabled
+- PHP 8.1+ with `allow_url_fopen` enabled
 - Web server (Apache/Nginx/built-in PHP server)
 - Internet connection for live API data
 
 ## Usage
 
-1. Place all files in your web server's document root
-2. Access via browser: `http://your-domain/V5/`
-3. Select travel parameters:
-   - Destination city (Vilnius, Kaunas, Klaipėda)
-   - Origin airport (specific or "All origins")
-   - Travel date
-   - Number of travelers and nights
-   - Budget
-   - Student discount (optional)
-   - Activity preferences
+1. Start the PHP server: `php -S localhost:8001`
+2. Access via browser: `http://localhost:8001`
+3. Run mathematical proofs: `php tests/category_laws_test.php`
 4. The application validates each step and shows:
-   - Selected itinerary with pricing breakdown
-   - Any validation errors with suggested fixes
-   - Live weather and currency information
-
-## API Dependencies
-
-- [Open-Meteo](https://open-meteo.com/) for weather data
-- [Frankfurter](https://www.frankfurter.app/) for exchange rates
-- [GetYourGuide](https://www.getyourguide.com/) for activity links (static)
-
-## Design Philosophy
-
-This application demonstrates how Category Theory provides practical benefits in web development:
-
-1. **Type Safety**: Monads prevent null pointer errors through explicit handling
-2. **Composability**: Kleisli arrows allow chaining operations with automatic error propagation
-3. **Associativity**: Monoids ensure consistent results regardless of operation grouping
-4. **Abstraction**: Functors enable reusable transformation logic
-
-The categorical pipeline makes the application robust, maintainable, and mathematically sound.
-
-## Future Enhancements
-
-- Separate PHP classes for entities (Flight, Hotel, Activity)
-- Service layer for API interactions
-- Unit tests for Monad implementations
-- Caching layer for API responses
-- Additional destinations and travel options
-- User authentication and saved itineraries
+   - Selected itinerary with pricing breakdown and visual graph path.
+   - Any validation errors with suggested fixes and categorical traces.
 
 ## License
 
