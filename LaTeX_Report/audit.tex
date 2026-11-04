@@ -1,0 +1,17 @@
+Changing the semantics of a foundational primitive such as \texttt{Option::pure} is, by construction, a project-wide change: every caller that happened to rely on the old (incorrect) double meaning of \texttt{false} is now exposed to different behaviour. Fixing the one call site found by inspection (\texttt{fetchLiveJsonOption}, Section~\ref{sec:verification}) is not sufficient evidence that no other call site was silently depending on the bug; it is evidence for that one call site only. An explicit audit of the entire codebase was therefore run before considering the fix complete.
+
+\begin{lstlisting}[language=bash,caption={Audit command: every construction and consumption site of Option}]
+grep -rn "Option::pure\|->fmap(\|->bind(\|->getOrElse(\|new Some(\|new None(" \
+     index.php src/
+\end{lstlisting}
+
+The search returns every place in the project that either constructs an \texttt{Option} (via \texttt{Option::pure}, \texttt{new Some}, or \texttt{new None}) or consumes one (via \texttt{fmap}, \texttt{bind}, or \texttt{getOrElse}). Two structurally different kinds of result came back:
+
+\begin{enumerate}
+  \item \textbf{Direct, explicit construction} -- \texttt{new Some(\dots)} and \texttt{new None()} appear directly in \texttt{RouteList::headOption} (natural transformation on an empty/non-empty list), in \texttt{Flight}/\texttt{Hotel}'s fallback offers, and in the now-fixed \texttt{fetchLiveJsonOption}. None of these ever pass through \texttt{Option::pure}, so none of them were affected by its old \texttt{false}-collapsing behaviour, and none of them are affected by removing it.
+  \item \textbf{Indirect construction via \texttt{Option::pure}} -- exactly \emph{two} call sites in the entire codebase invoke \texttt{Option::pure} itself: \texttt{Some::fmap()} (line~39 of \texttt{CategoryTheory.php}, which builds its result as \texttt{Option::pure(\$f(\$this->value))}) and the original \texttt{fetchLiveJsonOption} (already fixed). No third call site exists.
+\end{enumerate}
+
+\texttt{Some::fmap} deserves a second look, because it was not the call site Prof.~Grinis reported, yet it shares the same root cause: before the fix, mapping a function that returns \texttt{false} over a \texttt{Some} value -- e.g.\ \texttt{Some(5)->fmap(fn(\$x) => \$x > 10)} -- silently produced \texttt{None} instead of \texttt{Some(false)}, violating the functor identity law in spirit (a successful computation whose result happens to be \texttt{false} should not disappear). The single-line fix to \texttt{Option::pure} repairs \texttt{Some::fmap} automatically, since it is defined in terms of \texttt{pure}; no separate change to \texttt{fmap} was necessary, and the audit confirms there is no third, undiscovered call site that would need one.
+
+\textbf{Conclusion of the audit.} The fix to \texttt{Option::pure} has exactly two points of impact in the whole project -- \texttt{Some::fmap} (now correct, no change needed) and \texttt{fetchLiveJsonOption} (fixed and verified live in Section~\ref{sec:verification}). No other code in \texttt{index.php} or \texttt{src/CategoryTheory.php} constructs an \texttt{Option} through \texttt{pure}, so no other behaviour in the application changes as a result of this fix.

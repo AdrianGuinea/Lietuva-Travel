@@ -1,0 +1,196 @@
+\section{Corrected Core Classes (\texttt{src/CategoryTheory.php})}\label{app:src}
+
+% Listings below carry the file's real (3-digit) line numbers via firstnumber,
+% so the numbering column needs to be widened or the digits get clipped by the frame.
+\lstset{xleftmargin=32pt, framexleftmargin=24pt, numbersep=5pt}
+
+For reference, this appendix reproduces -- verbatim, with line numbers taken from the file as submitted -- the four classes directly touched by the three fixes: the \texttt{Option} monad (Listing~\ref{lst:app-option}), the \texttt{TripMetrics} monoid (Listing~\ref{lst:app-monoid}), the free category path type \texttt{FreeCategoryPath} (Listing~\ref{lst:app-path}), and \texttt{Itinerary::advance()} (Listing~\ref{lst:app-advance}).
+
+\begin{lstlisting}[caption={\texttt{Option}, \texttt{Some}, \texttt{None} -- fixed \texttt{pure}},label={lst:app-option},firstnumber=27]
+abstract class Option implements Monad {
+    public static function pure(mixed $value): self {
+        return ($value === null) ? new None() : new Some($value);
+    }
+    abstract public function isSome(): bool;
+    abstract public function getOrElse(mixed $default): mixed;
+    abstract public function toEither(array $errorData): Either;
+}
+
+final class Some extends Option {
+    public function __construct(private readonly mixed $value) {}
+    public function fmap(callable $f): Option { return Option::pure($f($this->value)); }
+    public function bind(callable $f): Option {
+        $res = $f($this->value);
+        if (!$res instanceof Option) {
+            throw new InvalidArgumentException("Option::bind must return an Option instance.");
+        }
+        return $res;
+    }
+    public function isSome(): bool { return true; }
+    public function getOrElse(mixed $default): mixed { return $this->value; }
+    public function toEither(array $errorData): Either { return new Right($this->value); }
+}
+
+final class None extends Option {
+    public function fmap(callable $f): Option { return $this; }
+    public function bind(callable $f): Option { return $this; }
+    public function isSome(): bool { return false; }
+    public function getOrElse(mixed $default): mixed { return $default; }
+    public function toEither(array $errorData): Either { return new Left($errorData); }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={\texttt{TripMetrics} -- fixed, cent-exact \texttt{append}},label={lst:app-monoid},firstnumber=122]
+final class TripMetrics implements Monoid {
+    public readonly float $costEur;
+    public readonly int $costCents;
+
+    public function __construct(
+        float $costEur,
+        public readonly int $durationHours,
+        public readonly int $points,
+        public readonly array $items = []
+    ) {
+        $this->costCents = (int) round($costEur * 100);
+        $this->costEur = $this->costCents / 100;
+    }
+
+    public static function empty(): self { return new self(0.0, 0, 0, []); }
+
+    public function append(Monoid $other): self {
+        if (!$other instanceof self) {
+            throw new InvalidArgumentException("Can only append TripMetrics.");
+        }
+        return new self(
+            ($this->costCents + $other->costCents) / 100,
+            $this->durationHours + $other->durationHours,
+            $this->points + $other->points,
+            array_merge($this->items, $other->items)
+        );
+    }
+
+    public static function fold(array $list): self {
+        return array_reduce($list, fn(self $acc, self $item) => $acc->append($item), self::empty());
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={\texttt{FreeCategoryPath} -- composition in $F(G)$, unchanged},label={lst:app-path},firstnumber=183]
+final class FreeCategoryPath {
+    public function __construct(
+        public readonly GraphNode $source,
+        public readonly GraphNode $target,
+        public readonly array $edges = []
+    ) {}
+
+    public static function identity(GraphNode $node): self {
+        return new self($node, $node, []);
+    }
+
+    public static function fromEdge(GraphEdge $edge): self {
+        return new self($edge->source, $edge->target, [$edge]);
+    }
+
+    public function compose(self $next): Either {
+        if ($this->target->id !== $next->source->id) {
+            return new Left([
+                'step'  => 'Free Category Inductor F(G)',
+                'title' => 'Non-Composable Graph Morphisms',
+                'msg'   => "Target vertex '{$this->target->id}' does not match source vertex '{$next->source->id}'.",
+                'fix'   => 'Ensure graph edges form a connected walk u -> v -> w.'
+            ]);
+        }
+        return new Right(new self(
+            $this->source,
+            $next->target,
+            array_merge($this->edges, $next->edges)
+        ));
+    }
+
+    public function evaluateMetrics(): TripMetrics {
+        return TripMetrics::fold(array_map(fn(GraphEdge $e) => $e->weight, $this->edges));
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[caption={\texttt{Itinerary::advance()} -- fixed, propagates composition failure},label={lst:app-advance},firstnumber=348]
+public function advance(
+    ?Flight $flight = null,
+    ?Hotel $hotel = null,
+    ?array $activities = null,
+    ?TripMetrics $stepMetrics = null,
+    string $stepType = '',
+    string $traceMsg = '',
+    ?GraphEdge $graphEdge = null
+): self {
+    $newMetrics = $stepMetrics ? $this->metrics->append($stepMetrics) : $this->metrics;
+    $newTrace = $this->trace;
+    if ($traceMsg !== '') $newTrace[] = $traceMsg;
+
+    $newPath = $this->inducedPath;
+    if ($graphEdge !== null) {
+        if (empty($newPath->edges)) {
+            $newPath = FreeCategoryPath::fromEdge($graphEdge);
+        } else {
+            $composed = $newPath->compose(FreeCategoryPath::fromEdge($graphEdge));
+            if (!$composed->isRight()) {
+                $err = $composed->getValue();
+                throw new RuntimeException("{$err['title']}: {$err['msg']}");
+            }
+            $newPath = $composed->getValue();
+        }
+    }
+
+    return new self(/* ... unchanged field threading ... */);
+}
+\end{lstlisting}
+
+\section{New Regression Assertions (\texttt{tests/category\_laws\_test.php})}\label{app:tests}
+
+Listing~\ref{lst:app-test1} through Listing~\ref{lst:app-test3} are the three assertions added to the suite, one per defect, each reproducing Prof.~Grinis' exact counter-example rather than a weaker, hand-picked one.
+
+\begin{lstlisting}[caption={Regression for the \texttt{Option::pure(false)} defect},label={lst:app-test1},firstnumber=99]
+assertLaw(
+    '3. Option Monad Laws (Maybe)',
+    'Pure Preserves Falsy Values (Right Identity, false case)',
+    'm >>= Option::pure  ===  m  for m = Some(false)',
+    (new Some(false))->bind($optPure)->isSome()
+        && (new Some(false))->bind($optPure)->getOrElse('MISSING') === false,
+    'Some(false)->bind(Option::pure) must stay Some(false), not collapse to None (false !== absence)'
+);
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Regression for the sub-cent monoid associativity defect},label={lst:app-test2},firstnumber=195]
+$cent1 = new TripMetrics(0.004, 0, 0);
+$cent2 = new TripMetrics(0.004, 0, 0);
+$cent3 = new TripMetrics(0.005, 0, 0);
+$centGroup1 = $cent1->append($cent2)->append($cent3);
+$centGroup2 = $cent1->append($cent2->append($cent3));
+assertLaw(
+    '5. Monoid Laws (TripMetrics)',
+    'Associativity Law (Sub-Cent Rounding Case)',
+    '(a (+) b) (+) c  =  a (+) (b (+) c)  for a=0.004, b=0.004, c=0.005',
+    $centGroup1->costEur === $centGroup2->costEur,
+    "(EUR0.004 (+) EUR0.004) (+) EUR0.005 = EUR{$centGroup1->costEur} === EUR0.004 (+) (EUR0.004 (+) EUR0.005) = EUR{$centGroup2->costEur}"
+);
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Regression for the swallowed graph-composition-failure defect},label={lst:app-test3},firstnumber=263]
+$it0 = new Itinerary('Vilnius', 'VNO', 2, 1, 500.0, 'Sunny');
+$it1 = $it0->advance(graphEdge: new GraphEdge(
+    'e0', new GraphNode('VNO', 'Origin Hub', 'origin'), $nVNO, 'Arrive', TripMetrics::empty()
+));
+$advanceThrew = false;
+try {
+    $it1->advance(graphEdge: new GraphEdge('bad', $nHTL, $nACT, 'Mismatch', TripMetrics::empty()));
+} catch (RuntimeException $e) {
+    $advanceThrew = true;
+}
+assertLaw(
+    '7. Free Category Inductor F(G) (Itinerary Fail-Fast)',
+    'Composition Failure Propagation',
+    'compose(p1, p2) = Left  =>  advance() throws, never silently ignores it',
+    $advanceThrew,
+    'Itinerary::advance() throws RuntimeException when the induced path target does not match the next edge source.'
+);
+\end{lstlisting}

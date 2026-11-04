@@ -216,9 +216,9 @@
 \vspace{5cm}
 
 
-\hspace{0.5\textwidth}
-\begin{minipage}{0.4\textwidth}
- \begin{flushleft} 
+\begin{center}
+\begin{minipage}{0.5\textwidth}
+ \centering
 \iftoggle{inLithuanian}
 {
  \ifstrequal{#3}{}{}{Atliko:\\[5pt]}
@@ -227,22 +227,21 @@
 \ifstrequal{#3}{}{}{Done by:\\[5pt]}
 }
 %\noindent
-\begin{tabular}{@{}lr}%\setlength\tabcolsep{0pt}
-\ifstrequal{#3}{}{}{#3&\hspace{2cm}\authortitle\\[5pt]}
-\ifstrequal{#4}{}{}{#4&\authortitle\\[5pt]}
-\ifstrequal{#5}{}{}{#5&\authortitle\\[5pt]}
-\ifstrequal{#6}{}{}{#6&\authortitle\\[5pt]}
-\ifstrequal{#7}{}{}{#7&\authortitle\\}
+\begin{tabular}{@{}c@{}}%\setlength\tabcolsep{0pt}
+\ifstrequal{#3}{}{}{#3\authortitle\\[5pt]}
+\ifstrequal{#4}{}{}{#4\authortitle\\[5pt]}
+\ifstrequal{#5}{}{}{#5\authortitle\\[5pt]}
+\ifstrequal{#6}{}{}{#6\authortitle\\[5pt]}
+\ifstrequal{#7}{}{}{#7\authortitle\\}
 \end{tabular}
 
-\end{flushleft}
-
 \end{minipage}
+\end{center}
 
 \vspace{0.5cm}
-\hspace{0.5\textwidth}
-\begin{minipage}{0.4\textwidth}
- \begin{flushleft} 
+\begin{center}
+\begin{minipage}{0.5\textwidth}
+ \centering
 
 \ifstrequal{#8}{}{}
 {
@@ -259,9 +258,9 @@ Supervisor:
 
 }
 
-\end{flushleft}
 
 \end{minipage}
+\end{center}
 
 
 \vfill

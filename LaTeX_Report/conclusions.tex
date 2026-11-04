@@ -6,4 +6,18 @@ All three defects reported by Prof.~I.~Grinis were root-caused and fixed with mi
   \item \texttt{Itinerary::advance()} now throws a \texttt{RuntimeException} carrying the free category's own \texttt{Left} error message when a graph edge does not compose with the current induced path, instead of silently keeping the previous (shorter, incorrect) path and returning a successful itinerary.
 \end{itemize}
 
-Each fix is accompanied by a new assertion in \texttt{tests/category\_laws\_test.php}, reproducing the exact counter-example supplied by Prof.~Grinis (including the $a=0.004,\,b=0.004,\,c=0.005$ monoid case). The suite, previously reporting ``15/15'', now reports \textbf{18/18} laws verified, and the three new assertions fail against the old code and pass against the fixed code, confirming both the regressions and the fixes.
+Each fix is accompanied by a new assertion in \texttt{tests/category\_laws\_test.php}, reproducing the exact counter-example supplied by Prof.~Grinis (including the $a=0.004,\,b=0.004,\,c=0.005$ monoid case). The suite, previously reporting ``15/15'', now reports \textbf{18/18} laws verified, and the three new assertions fail against the old code and pass against the fixed code, confirming both the regressions and the fixes. Table~\ref{tabl:summary} summarises the three defects end to end.
+
+\begin{table}[!ht]\centering
+\caption{Summary of the three defects, from report to fix to verification}
+\label{tabl:summary}
+\small
+\begin{tabular}{|p{2.6cm}|p{3.6cm}|p{4.3cm}|p{3.3cm}|}\hline
+\textbf{Law violated} & \textbf{Root cause} & \textbf{Fix} & \textbf{Verified by} \\\hline
+Monad right identity ($m\mathbin{>\!\!>\!\!=}\mathrm{pure}\equiv m$) & \texttt{false} treated as absence in \texttt{Option::pure} & Only \texttt{null} denotes absence; sentinel checked explicitly at the one real caller & Unit assertion + live HTTP test (Sec.~\ref{sec:verification}) \\\hline
+Monoid associativity ($(a\oplus b)\oplus c = a\oplus(b\oplus c)$) & Re-rounding to 2 decimals after every \texttt{append} & Accumulate in integer cents, round once at construction & Unit assertion with Prof.~Grinis' exact $a,b,c$ \\\hline
+Error-propagation obligation of \texttt{Either::bind} & \texttt{Left} from \texttt{compose} read but not propagated in \texttt{advance()} & Throw on \texttt{Left}, carrying the categorical error message & Unit assertion asserting the throw occurs \\\hline
+\end{tabular}
+\end{table}
+
+This progression -- a law-level description of what went wrong, a root-cause diagnosis in the code, a minimal fix, and an independent check that the fix actually holds -- was applied uniformly to all three defects, and is the same discipline the project's own law suite was supposed to enforce in the first place. The suite's earlier ``15/15'' badge was not dishonest, only incomplete: it verified every law it happened to test, but never generated the adversarial inputs (a falsy payload, a sub-cent amount, a deliberately broken graph) that expose these particular violations. The three new assertions close exactly that gap.

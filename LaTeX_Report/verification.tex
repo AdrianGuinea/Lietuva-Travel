@@ -1,0 +1,42 @@
+The three unit-level regression assertions added in Section~\ref{sec:coverage} verify the laws in isolation, with values constructed directly in PHP. They do not, by themselves, prove that the first fix behaves correctly at its real point of use: \texttt{fetchLiveJsonOption()} wraps \texttt{file\_get\_contents()} against two live third-party services (Open-Meteo for weather, Frankfurter/ECB for currency conversion), and the sentinel value that originally motivated the \texttt{Option::pure(false)} shortcut -- \texttt{file\_get\_contents()} returning \texttt{false} -- is produced by the PHP runtime itself on a real network failure, not by a value the test suite controls. To close that gap, the fixed application was started as an actual HTTP service and driven with real requests over the network.
+
+\subsection{Method}
+
+The built-in PHP development server was started against the corrected codebase, and the main page was requested twice: once with default parameters (exercising the live Open-Meteo weather call through \texttt{getLiveLithuanianWeather()}), and once with the currency explicitly set to \texttt{USD} (exercising the live Frankfurter call through \texttt{getLiveCurrencyRate()}, which is skipped entirely when the currency is \texttt{EUR}). Both calls route through the fixed \texttt{fetchLiveJsonOption()}:
+\begin{lstlisting}[caption={Call site under live test (index.php)}]
+function fetchLiveJsonOption(string $url): Option {
+    $ctx = stream_context_create([...]);
+    $raw = @file_get_contents($url, false, $ctx);
+    return ($raw === false ? new None() : new Some($raw))
+        ->fmap(fn(string $json) => json_decode($json, true));
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash,caption={Commands issued against the running server}]
+php -S 127.0.0.1:8099 &
+curl -s -o /dev/null -w "HTTP:%{http_code}\n" \
+     http://127.0.0.1:8099/index.php
+
+curl -s -X POST --data "currency=USD" \
+     http://127.0.0.1:8099/index.php -o resp_usd.html
+grep -oE "LIVE ECB|Fallback|LIVE Open-Meteo|Offline Cache" resp_usd.html
+grep -iE "Fatal error|TypeError|Warning" resp_usd.html
+\end{lstlisting}
+
+\subsection{Result}
+
+The default request returned \texttt{HTTP 200}. The \texttt{USD} request's response body contained \texttt{LIVE Open-Meteo} (twice -- once per weather read on the page) and, in the currency-exchange banner, a genuine live rate rather than the offline fallback:
+\begin{lstlisting}
+<strong>ECB Exchange Rate:</strong>
+<span>1 EUR = 1.1179 USD</span>
+\end{lstlisting}
+No occurrence of \texttt{Fatal error}, \texttt{TypeError}, \texttt{Offline Cache}, or \texttt{Fallback} appeared in either response body or in the PHP development server's own log, which recorded clean \texttt{[200]} responses for both requests:
+\begin{lstlisting}[language=bash]
+[...] 127.0.0.1:51838 Accepted
+[...] 127.0.0.1:51838 [200]: POST /index.php
+[...] 127.0.0.1:51838 Closing
+\end{lstlisting}
+
+\subsection{Why This Matters}
+
+Before the fix, \texttt{Option::pure(\$raw)} treated a \texttt{false} \texttt{\$raw} (a failed fetch) and a string \texttt{\$raw} (a successful fetch) identically whenever the application code called \texttt{pure} directly on the raw result -- which it previously did. Removing the \texttt{false}-as-absence special case from \texttt{Option::pure} without touching this call site would have made a \emph{successful} fetch behave correctly (since \texttt{Option::pure(\$raw)} would now wrap any non-null string as before) but would have broken a \emph{failed} fetch in a new way: \texttt{Option::pure(false)} would now produce \texttt{Some(false)} instead of \texttt{None}, and the subsequent \texttt{->fmap(fn(string \$json) => ...)} would be invoked with \texttt{\$json = false}, which violates the closure's \texttt{string} type declaration under \texttt{declare(strict\_types=1)} and throws a \texttt{TypeError} at runtime -- turning a graceful offline fallback into a fatal error on every network hiccup. This is exactly the kind of regression that a purely static fix, verified only against hand-picked values, can introduce without anyone noticing until the live service degrades. The explicit sentinel check shown above (\texttt{\$raw === false ? new None() : new Some(\$raw)}) was therefore written and then exercised against the two real external services before this report was finalised, rather than left as an untested consequence of the monad-law fix.
