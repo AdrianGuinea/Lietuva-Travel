@@ -15,7 +15,7 @@ Lietuva Travel helps users plan trips to Lithuanian destinations (Vilnius, Kauna
   - Option/Either Monads for error handling
   - Monoids for associative cost calculation
   - Natural Transformations for converting collections to options
-- **Mathematical Verification**: Built-in test suite verifying 15/15 Category Theory laws.
+- **Mathematical Verification**: Built-in test suite verifying 18/18 Category Theory laws.
 - **Interactive UI**: Select flights, hotels, and activities with real-time pricing and visual F(G) path traces.
 - **Validation Pipeline**: Step-by-step validation ensuring:
   - Flight availability and pricing
@@ -55,7 +55,7 @@ Lietuva-Travel/
 ├── src/
 │   └── CategoryTheory.php    # Core categorical logic and Graph Inductors
 ├── tests/
-│   └── category_laws_test.php# 15/15 Mathematical laws test suite
+│   └── category_laws_test.php# 18/18 Mathematical laws test suite
 ├── lang/
 │   ├── en.php                # English translations
 │   ├── es.php                # Spanish translations
