@@ -1,0 +1,9 @@
+All three defects reported by Prof.~I.~Grinis were root-caused and fixed with minimal, localised changes to \texttt{src/CategoryTheory.php} (and one dependent call site in \texttt{index.php}):
+
+\begin{itemize}
+  \item \texttt{Option::pure} now treats only \texttt{null} as absence of value, so \texttt{Some(false)} round-trips correctly through \texttt{bind(Option::pure)}, restoring the monad's right-identity law. The single call site that relied on the old behaviour (\texttt{fetchLiveJsonOption}, which used the \texttt{false} sentinel returned by \texttt{file\_get\_contents} on failure) was updated to test for that sentinel explicitly instead of overloading \texttt{Option::pure} with two meanings.
+  \item \texttt{TripMetrics} now rounds to whole cents exactly once, at construction time, and stores that integer value (\texttt{costCents}). \texttt{append()} adds integers, which is exactly associative, instead of adding floats and re-rounding to two decimals after every step, which was not. The public float interface (\texttt{costEur}) is unchanged, so no other call site required modification.
+  \item \texttt{Itinerary::advance()} now throws a \texttt{RuntimeException} carrying the free category's own \texttt{Left} error message when a graph edge does not compose with the current induced path, instead of silently keeping the previous (shorter, incorrect) path and returning a successful itinerary.
+\end{itemize}
+
+Each fix is accompanied by a new assertion in \texttt{tests/category\_laws\_test.php}, reproducing the exact counter-example supplied by Prof.~Grinis (including the $a=0.004,\,b=0.004,\,c=0.005$ monoid case). The suite, previously reporting ``15/15'', now reports \textbf{18/18} laws verified, and the three new assertions fail against the old code and pass against the fixed code, confirming both the regressions and the fixes.

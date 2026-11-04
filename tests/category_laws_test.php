@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * ============================================================================
- * LIETUVA TRAVEL - FORMAL CATEGORY THEORY LAWS TEST SUITE (15/15 LAWS)
+ * LIETUVA TRAVEL - FORMAL CATEGORY THEORY LAWS TEST SUITE (18/18 LAWS)
  * Verifies Barr & Wells Mathematical Laws in PHP:
  * 1. Functor Laws (Identity & Composition) on RouteList & Option
  * 2. Natural Transformation Law (Naturality Square: η ∘ F(f) === G(f) ∘ η)
@@ -96,6 +96,14 @@ assertLaw(
     'Option::pure(80)->bind(safeHalf) === safeHalf(80) => Some(40.0)'
 );
 
+assertLaw(
+    '3. Option Monad Laws (Maybe)',
+    'Pure Preserves Falsy Values (Right Identity, false case)',
+    'm >>= Option::pure  ≡  m  for m = Some(false)',
+    (new Some(false))->bind($optPure)->isSome() && (new Some(false))->bind($optPure)->getOrElse('MISSING') === false,
+    'Some(false)->bind(Option::pure) must stay Some(false), not collapse to None (false !== absence)'
+);
+
 $someVal = new Some(50.0);
 assertLaw(
     '3. Option Monad Laws (Maybe)',
@@ -184,6 +192,19 @@ assertLaw(
     "(€42 ⊕ €110) ⊕ €45 = €{$group1->costEur} ({$group1->durationHours}h) === €42 ⊕ (€110 ⊕ €45) = €{$group2->costEur} ({$group2->durationHours}h)"
 );
 
+$cent1 = new TripMetrics(0.004, 0, 0);
+$cent2 = new TripMetrics(0.004, 0, 0);
+$cent3 = new TripMetrics(0.005, 0, 0);
+$centGroup1 = $cent1->append($cent2)->append($cent3);
+$centGroup2 = $cent1->append($cent2->append($cent3));
+assertLaw(
+    '5. Monoid Laws (TripMetrics)',
+    'Associativity Law (Sub-Cent Rounding Case)',
+    '(a ⊕ b) ⊕ c  =  a ⊕ (b ⊕ c)  for a=0.004, b=0.004, c=0.005',
+    $centGroup1->costEur === $centGroup2->costEur,
+    "(€0.004 ⊕ €0.004) ⊕ €0.005 = €{$centGroup1->costEur} === €0.004 ⊕ (€0.004 ⊕ €0.005) = €{$centGroup2->costEur}"
+);
+
 // ============================================================================
 // 6. FREE CATEGORY INDUCTOR LAWS F(G) OVER DIRECTED GRAPHS (Prof. I. Grinis)
 // ============================================================================
@@ -235,11 +256,32 @@ assertLaw(
 );
 
 // ============================================================================
+// 7. GRAPH COMPOSITION FAILURE PROPAGATION (Prof. I. Grinis)
+// Itinerary::advance() must fail loudly on a non-composable graph edge,
+// never silently keep the previous path as if nothing happened.
+// ============================================================================
+$it0 = new Itinerary('Vilnius', 'VNO', 2, 1, 500.0, 'Sunny');
+$it1 = $it0->advance(graphEdge: new GraphEdge('e0', new GraphNode('VNO', 'Origin Hub', 'origin'), $nVNO, 'Arrive', TripMetrics::empty()));
+$advanceThrew = false;
+try {
+    $it1->advance(graphEdge: new GraphEdge('bad', $nHTL, $nACT, 'Mismatch', TripMetrics::empty()));
+} catch (RuntimeException $e) {
+    $advanceThrew = true;
+}
+assertLaw(
+    '7. Free Category Inductor F(G) (Itinerary Fail-Fast)',
+    'Composition Failure Propagation',
+    'compose(p1, p2) = Left  ⇒  advance() throws, never silently ignores it',
+    $advanceThrew,
+    'Itinerary::advance() throws RuntimeException when the induced path target does not match the next edge source.'
+);
+
+// ============================================================================
 // OUTPUT (CLI OR WEB BROWSER)
 // ============================================================================
 if (PHP_SAPI === 'cli') {
     echo "\n\033[1;32m======================================================================\033[0m\n";
-    echo "\033[1;33m LIETUVA TRAVEL - BARR & WELLS CATEGORY THEORY TEST SUITE (15/15)\033[0m\n";
+    echo "\033[1;33m LIETUVA TRAVEL - BARR & WELLS CATEGORY THEORY TEST SUITE (18/18)\033[0m\n";
     echo "\033[1;32m======================================================================\033[0m\n\n";
     $passedCount = 0;
     foreach ($results as $r) {
@@ -257,7 +299,7 @@ if (PHP_SAPI === 'cli') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lietuva Travel — Category Theory Laws Verification (15/15)</title>
+    <title>Lietuva Travel — Category Theory Laws Verification (18/18)</title>
     <link rel="icon" href="../img/favicon.svg?v=7.0" type="image/svg+xml">
     <link rel="stylesheet" href="../css/style.css?v=7.0">
     <style>
@@ -279,7 +321,7 @@ if (PHP_SAPI === 'cli') {
 <div class="test-wrap">
     <div class="summary-banner">
         <div>
-            <strong style="font-size:1.2rem;">✅ 15 / 15 Mathematical Laws Verified (100% Passed)</strong>
+            <strong style="font-size:1.2rem;">✅ 18 / 18 Mathematical Laws Verified (100% Passed)</strong>
             <div style="font-size:0.86rem; color:#cfe3d8;">Includes Free Category Inductor F(G) over Directed Travel Graphs (Barr & Wells Chapter 2)</div>
         </div>
         <span class="formula">PHP <?= PHP_VERSION ?></span>

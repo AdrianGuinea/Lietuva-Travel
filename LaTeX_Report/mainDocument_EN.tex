@@ -1,0 +1,150 @@
+\documentclass[a4paper,12pt,fleqn]{article}
+\input{allPacks}
+
+\newtoggle{inLithuanian}
+\settoggle{inLithuanian}{false}
+
+\newtoggle{needPreface}
+\settoggle{needPreface}{false}
+
+\newtoggle{signaturesOnTitlePage}
+\settoggle{signaturesOnTitlePage}{true}
+
+\lstset{language=PHP}
+
+\input{macros}
+
+\begin{document}
+ % #1 -report type, #2 - title, #3-7 students, #8 - supervisor
+ \depttitlepage{Semester Project}{Fixing the Mathematical Foundations of the Lietuva Travel Category-Theoretic Engine\\{\small Corrección de los fundamentos matemáticos del motor categórico de Lietuva Travel}}{Adrián Guinea Pérez}{}{}{}{}{Prof. I. Grinis}
+
+\tableofcontents
+
+
+\sectionWithoutNumber{Sutartinis terminų žodynas}{keywords}{Category Theory, Monad, Monoid, Functor, Free Category, Natural Transformation, PHP 8.1}
+
+ %both abstracts
+\bothabstracts{\input{abstract}}
+{Corrección de los fundamentos matemáticos del motor categórico de Lietuva Travel}
+{\input{abstractEN}}
+
+
+ %Introduction section: label is sec:intro
+\sectionWithoutNumber{\keyWordIntroduction}{intro}
+\input{introduction.tex}
+
+
+\newpage
+\section{Analysis of the Three Reported Defects}\label{sec:motivation}
+
+\subsection{Option Monad: \texttt{pure} Does Not Satisfy the Right-Identity Law}\label{sec:bug1}
+
+The \texttt{Option} monad is expected to satisfy the monad laws for \emph{every} value its type parameter can hold, including \texttt{bool}. The original implementation of \texttt{Option::pure} was:
+
+\begin{lstlisting}[caption={Original \texttt{Option::pure} (src/CategoryTheory.php)}]
+public static function pure(mixed $value): self {
+    return ($value === null || $value === false)
+        ? new None()
+        : new Some($value);
+}
+\end{lstlisting}
+
+Taking $m = \mathtt{Some(false)}$ and $f = \texttt{Option::pure}$, the right-identity law $m \mathbin{>\!\!>\!\!=} \texttt{pure} \equiv m$ requires $m\mathbin{>\!\!>\!\!=}f$ to equal \texttt{Some(false)}. Instead it produced \texttt{None}, because \texttt{pure} conflated the domain value \texttt{false} with the \emph{absence} of a value — exactly the distinction the \texttt{Option} monad exists to preserve. The root cause is that \texttt{null} (absence) and \texttt{false} (a legitimate boolean payload) are not the same value, yet the guard treated them identically.
+
+\textbf{Fix.} Only \texttt{null} denotes absence:
+\begin{lstlisting}[caption={Fixed \texttt{Option::pure}}]
+public static function pure(mixed $value): self {
+    return ($value === null) ? new None() : new Some($value);
+}
+\end{lstlisting}
+
+One caller, \texttt{fetchLiveJsonOption()} in \texttt{index.php}, had silently relied on the old double meaning: \texttt{file\_get\_contents()} returns the sentinel \texttt{false} on failure, and the code built an \texttt{Option} from it via \texttt{Option::pure(\$raw)}. Since \texttt{pure} no longer treats \texttt{false} as absence, that call site was changed to test the sentinel explicitly instead of overloading a general-purpose constructor with a local, API-specific meaning:
+\begin{lstlisting}[caption={index.php -- explicit sentinel check instead of overloaded pure()}]
+$raw = @file_get_contents($url, false, $ctx);
+return ($raw === false ? new None() : new Some($raw))
+    ->fmap(fn(string $json) => json_decode($json, true));
+\end{lstlisting}
+
+\subsection{Monoid: \texttt{TripMetrics::append} Is Not Associative}\label{sec:bug2}
+
+\texttt{TripMetrics} is declared a \texttt{Monoid}, which requires $(a\oplus b)\oplus c = a \oplus (b\oplus c)$ for all values, exactly. The original \texttt{append} rounded the running total to two decimals after \emph{every} addition:
+\begin{lstlisting}[caption={Original \texttt{TripMetrics::append}}]
+public function append(Monoid $other): self {
+    return new self(
+        round($this->costEur + $other->costEur, 2),
+        ...
+    );
+}
+\end{lstlisting}
+
+For $a=0.004,\,b=0.004,\,c=0.005$ (Table~\ref{tabl:monoid}), rounding after each step amplifies the order in which values are combined into a visible difference: grouping $(a\oplus b)$ first rounds $0.008\to 0.01$, then $0.01+0.005\to 0.02$; grouping $(b\oplus c)$ first rounds $0.009\to 0.01$, then $a+0.01\to 0.01$. The two totals disagree, so the monoid is not actually associative — the repeated rounding is a lossy, order-dependent operation disguised as a pure sum.
+
+\begin{table}[!ht]\centering
+\caption{Associativity counter-example reported by Prof.~Grinis}
+\label{tabl:monoid}
+\begin{tabular}{|l|r|r|}\hline
+Grouping & Original (buggy) & Fixed \\\hline
+$(a\oplus b)\oplus c$ & 0.02 & 0.01 \\\hline
+$a\oplus (b\oplus c)$ & 0.01 & 0.01 \\\hline
+\end{tabular}
+\end{table}
+
+\textbf{Fix.} Round to whole cents exactly once, at construction, and keep that integer as the value actually added:
+\begin{lstlisting}[caption={Fixed \texttt{TripMetrics} -- integer cents as the additive carrier}]
+public readonly float $costEur;
+public readonly int $costCents;
+
+public function __construct(float $costEur, ...) {
+    $this->costCents = (int) round($costEur * 100);
+    $this->costEur = $this->costCents / 100;
+}
+
+public function append(Monoid $other): self {
+    return new self(
+        ($this->costCents + $other->costCents) / 100,
+        ...
+    );
+}
+\end{lstlisting}
+Integer addition is exactly associative, so no grouping of \texttt{append} calls can disagree; the public \texttt{costEur} float is only ever a deterministic function of the accumulated integer cents, never an input to further rounding.
+
+\subsection{Free Category $F(G)$: Composition Failures Were Swallowed}\label{sec:bug3}
+
+In the free category $F(G)$ induced by the travel graph, \texttt{FreeCategoryPath::compose} already returns an \texttt{Either}: \texttt{Right} on success, \texttt{Left} when the target vertex of the current path does not match the source vertex of the next edge (the paths do not form a connected walk). \texttt{Itinerary::advance()}, however, used that result incorrectly:
+\begin{lstlisting}[caption={Original \texttt{Itinerary::advance} -- Left is discarded}]
+$composed = $newPath->compose(FreeCategoryPath::fromEdge($graphEdge));
+if ($composed->isRight()) {
+    $newPath = $composed->getValue();
+}
+// execution continues either way
+\end{lstlisting}
+When composition fails, the \texttt{if} is simply not entered and \texttt{\$newPath} keeps its previous value; \texttt{advance()} still returns a brand-new, successful \texttt{Itinerary}. The categorical error is computed correctly and then thrown away, so an itinerary whose graph path is not actually a connected walk in $F(G)$ is reported as valid.
+
+\textbf{Fix.} Propagate the failure instead of absorbing it:
+\begin{lstlisting}[caption={Fixed \texttt{Itinerary::advance} -- Left fails the computation}]
+$composed = $newPath->compose(FreeCategoryPath::fromEdge($graphEdge));
+if (!$composed->isRight()) {
+    $err = $composed->getValue();
+    throw new RuntimeException("{$err['title']}: {$err['msg']}");
+}
+$newPath = $composed->getValue();
+\end{lstlisting}
+A non-composable edge is an internal invariant violation of the step-building pipeline (every edge is constructed by the application itself from the previous step's state), not a user-facing validation outcome like a late flight or an over-budget trip, so failing fast with an exception is the appropriate signal, consistent with how every other \texttt{Left} produced inside this pipeline is already treated as a short-circuit.
+
+\subsection{Regression Coverage}\label{sec:coverage}
+
+Each fix above is paired with one new assertion in \texttt{tests/category\_laws\_test.php}, reproducing Prof.~Grinis' exact examples: \texttt{Some(false)} round-tripping through \texttt{bind(Option::pure)}; the $a=0.004,\,b=0.004,\,c=0.005$ monoid grouping; and a two-step \texttt{Itinerary::advance()} call with a deliberately mismatched edge, asserting that it throws. Running \texttt{php tests/category\_laws\_test.php} against the corrected code reports \textbf{18/18} laws verified (up from the previous 15/15, which had missed all three cases above).
+
+ %Conclusions section
+\sectionWithoutNumber{\keyWordConclusions}{conclu}
+\input{conclusions.tex}
+
+\sectionWithoutNumber{Future Work}{future}{Possible follow-ups include replacing the remaining ad hoc \texttt{InvalidArgumentException} checks in \texttt{Monad::bind} implementations with static analysis guarantees, and extending the law suite with randomised (property-based) inputs rather than fixed examples, so similar edge cases are found automatically rather than by manual review.}
+
+\sectionWithoutNumber{\keyWordAIdeclaration}{aideclare}
+\input{aiusage}
+
+ %file literatureSources.bib
+\referenceSources{literatureSources}
+
+\end{document}

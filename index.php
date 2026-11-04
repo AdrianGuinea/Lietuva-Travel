@@ -26,7 +26,7 @@ function t(string $key, array $replacements = []): string {
 function fetchLiveJsonOption(string $url): Option {
     $ctx = stream_context_create(['http' => ['timeout' => 2.0, 'header' => "User-Agent: LietuvaTravel/6.2\r\n"]]);
     $raw = @file_get_contents($url, false, $ctx);
-    return Option::pure($raw)->fmap(fn(string $json) => json_decode($json, true));
+    return ($raw === false ? new None() : new Some($raw))->fmap(fn(string $json) => json_decode($json, true));
 }
 
 function getLiveLithuanianWeather(string $city): array {

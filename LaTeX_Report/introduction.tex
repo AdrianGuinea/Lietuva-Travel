@@ -1,0 +1,11 @@
+\emph{Lietuva Travel} is a PHP~8.1+ travel-planning application whose core logic (\texttt{src/CategoryTheory.php}) is explicitly built on category-theoretic structures, following the constructions of Barr and Wells~\cite{BarrWells1990}: a \texttt{Functor}/\texttt{Monad} interface pair in the style of Moggi's and Wadler's monadic treatment of computation~\cite{Moggi1991,Wadler1992}, the \texttt{Option} and \texttt{Either} monads, the \texttt{RouteList} functor with a natural transformation into \texttt{Option}, the \texttt{TripMetrics} monoid for associative cost aggregation, and a directed graph whose paths are lifted into a free category $F(G)$ (Prof.~I.~Grinis' model), where edge composition is interpreted as Kleisli composition in the \texttt{Either} monad.
+
+The project ships its own formal verification suite (\texttt{tests/category\_laws\_test.php}), which prints a ``15/15 laws verified'' badge. Prof.~Grinis reviewed the submission and reported, by e-mail, three concrete counter-examples that the existing suite failed to catch:
+
+\begin{enumerate}
+  \item \textbf{Option monad law violation.} \texttt{Option::pure(false)} returned \texttt{None} instead of \texttt{Some(false)}, because the implementation treated \texttt{false} as equivalent to \texttt{null}.
+  \item \textbf{Monoid associativity violation.} For $a=0.004$, $b=0.004$, $c=0.005$ (euros), \texttt{TripMetrics} produced $(a\oplus b)\oplus c = 0.02$ but $a\oplus(b\oplus c)=0.01$.
+  \item \textbf{Swallowed composition failure.} In \texttt{Itinerary::advance()}, a non-composable graph edge (target of the current path $\neq$ source of the next edge) was silently ignored instead of failing the itinerary computation.
+\end{enumerate}
+
+This report explains, for each issue, why the existing law was actually violated despite the suite reporting success, the minimal code change that restores the law, and the new regression check added so the suite can no longer miss it. The fixes are implemented directly in \texttt{src/CategoryTheory.php} and, where relevant, in the one call site in \texttt{index.php} that depended on the old (incorrect) behaviour.

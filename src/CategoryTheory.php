@@ -27,7 +27,7 @@ interface Monad extends Functor {
 // 2. OPTION MONAD (Maybe: Some | None)
 abstract class Option implements Monad {
     public static function pure(mixed $value): self {
-        return ($value === null || $value === false) ? new None() : new Some($value);
+        return ($value === null) ? new None() : new Some($value);
     }
     abstract public function isSome(): bool;
     abstract public function getOrElse(mixed $default): mixed;
@@ -120,12 +120,20 @@ interface Monoid {
 }
 
 final class TripMetrics implements Monoid {
+    public readonly float $costEur;
+    public readonly int $costCents;
+
     public function __construct(
-        public readonly float $costEur,
+        float $costEur,
         public readonly int $durationHours,
         public readonly int $points,
         public readonly array $items = []
-    ) {}
+    ) {
+        // shortcut: rounds to whole cents once, at the leaf. From here append() only
+        // ever adds ints, so (a+b)+c = a+(b+c) holds exactly — no re-rounding drift.
+        $this->costCents = (int) round($costEur * 100);
+        $this->costEur = $this->costCents / 100;
+    }
 
     public static function empty(): self { return new self(0.0, 0, 0, []); }
 
@@ -134,7 +142,7 @@ final class TripMetrics implements Monoid {
             throw new InvalidArgumentException("Can only append TripMetrics.");
         }
         return new self(
-            round($this->costEur + $other->costEur, 2),
+            ($this->costCents + $other->costCents) / 100,
             $this->durationHours + $other->durationHours,
             $this->points + $other->points,
             array_merge($this->items, $other->items)
@@ -356,9 +364,11 @@ final class Itinerary {
                 $newPath = FreeCategoryPath::fromEdge($graphEdge);
             } else {
                 $composed = $newPath->compose(FreeCategoryPath::fromEdge($graphEdge));
-                if ($composed->isRight()) {
-                    $newPath = $composed->getValue();
+                if (!$composed->isRight()) {
+                    $err = $composed->getValue();
+                    throw new RuntimeException("{$err['title']}: {$err['msg']}");
                 }
+                $newPath = $composed->getValue();
             }
         }
 
