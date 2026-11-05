@@ -1,0 +1,68 @@
+{
+  "index.php": {
+    "mtime": 1793795643.0053318,
+    "seen": 1793893564.047177,
+    "ast_hash": "01f6f390a90de1b11c175109dc4b03a2",
+    "semantic_hash": "01f6f390a90de1b11c175109dc4b03a2"
+  },
+  "js/main.js": {
+    "mtime": 1792313513.0,
+    "seen": 1793893564.0471945,
+    "ast_hash": "d0f3e318bd3cbfe01d58e8d4d865139e",
+    "semantic_hash": "d0f3e318bd3cbfe01d58e8d4d865139e"
+  },
+  "lang/en.php": {
+    "mtime": 1792447280.0,
+    "seen": 1793893564.0472033,
+    "ast_hash": "41ea649d26a12ac8768631c92641e088",
+    "semantic_hash": "41ea649d26a12ac8768631c92641e088"
+  },
+  "lang/es.php": {
+    "mtime": 1792447280.0,
+    "seen": 1793893564.0472083,
+    "ast_hash": "db87a0b6afbde8ced5f683666b873e41",
+    "semantic_hash": "db87a0b6afbde8ced5f683666b873e41"
+  },
+  "lang/lt.php": {
+    "mtime": 1792447280.0,
+    "seen": 1793893564.0472126,
+    "ast_hash": "b2a5f056372baa760b458a101ccd5de1",
+    "semantic_hash": "b2a5f056372baa760b458a101ccd5de1"
+  },
+  "src/CategoryTheory.php": {
+    "mtime": 1793795643.0053318,
+    "seen": 1793893564.047216,
+    "ast_hash": "c4087d7104f106bb8fb7bbc632107307",
+    "semantic_hash": "c4087d7104f106bb8fb7bbc632107307"
+  },
+  "tests/category_laws_test.php": {
+    "mtime": 1793795643.0053318,
+    "seen": 1793893564.04722,
+    "ast_hash": "07f8a4899ab186c6ebdb7bb3d7253103",
+    "semantic_hash": "07f8a4899ab186c6ebdb7bb3d7253103"
+  },
+  "README.md": {
+    "mtime": 1793801028.0678382,
+    "seen": 1793893564.047223,
+    "ast_hash": "50c87dd9d96ec5c79438a7b8d8c5ebbd",
+    "semantic_hash": "50c87dd9d96ec5c79438a7b8d8c5ebbd"
+  },
+  "LaTeX_Report/jb_VU_zenklas.pdf": {
+    "mtime": 1793795643.0013342,
+    "seen": 1793893564.0472264,
+    "ast_hash": "e1a5b2aadd7aba2c50bffcb71138a56e",
+    "semantic_hash": "e1a5b2aadd7aba2c50bffcb71138a56e"
+  },
+  "LaTeX_Report/mainDocument_EN.pdf": {
+    "mtime": 1793795799.360609,
+    "seen": 1793893564.0472295,
+    "ast_hash": "597ce32385062669e75e3cc586faf0ea",
+    "semantic_hash": "597ce32385062669e75e3cc586faf0ea"
+  },
+  "img/favicon.svg": {
+    "mtime": 1792314075.0,
+    "seen": 1793893564.0472322,
+    "ast_hash": "1278ea78da8df9808e25495d83d507b7",
+    "semantic_hash": "1278ea78da8df9808e25495d83d507b7"
+  }
+}
