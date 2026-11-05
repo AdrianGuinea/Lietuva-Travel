@@ -14,7 +14,7 @@ return [
     'preset_late_flight' => '❌ Fallo Arista e₂: Vuelo Nocturno vs Check-in',
     'preset_rain' => '❌ Fallo Arista e₃: Globo con Lluvia',
     'preset_budget' => '❌ Fallo Arista e₄: Exceso Presupuesto',
-    'open_test_suite' => '🧪 Verificar 15/15 Leyes Matemáticas ↗',
+    'open_test_suite' => '🧪 Verificar 18/18 Leyes Matemáticas ↗',
 
     // Barra en vivo
     'live_weather' => 'Clima en vivo en :city::',

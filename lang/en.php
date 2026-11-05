@@ -14,7 +14,7 @@ return [
     'preset_late_flight' => '❌ Fail Edge e₂: Late Arrival vs Check-in',
     'preset_rain' => '❌ Fail Edge e₃: Balloon in Rain',
     'preset_budget' => '❌ Fail Edge e₄: Over Budget',
-    'open_test_suite' => '🧪 Verify 15/15 Mathematical Laws ↗',
+    'open_test_suite' => '🧪 Verify 18/18 Mathematical Laws ↗',
 
     // Live Telemetry Bar
     'live_weather' => 'Live weather in :city::',

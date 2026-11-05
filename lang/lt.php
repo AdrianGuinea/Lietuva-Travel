@@ -14,7 +14,7 @@ return [
     'preset_late_flight' => '❌ Briaunos e₂ klaida: Vėlyvas skrydis',
     'preset_rain' => '❌ Briaunos e₃ klaida: Oro balionas per lietų',
     'preset_budget' => '❌ Briaunos e₄ klaida: Viršytas biudžetas',
-    'open_test_suite' => '🧪 Patikrinti 15/15 matematinių dėsnių ↗',
+    'open_test_suite' => '🧪 Patikrinti 18/18 matematinių dėsnių ↗',
 
     // Live Telemetry Bar
     'live_weather' => 'Orai gyvai (:city:):',
