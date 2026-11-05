@@ -27,7 +27,7 @@ interface Monad extends Functor {
 // 2. OPTION MONAD (Maybe: Some | None)
 abstract class Option implements Monad {
     public static function pure(mixed $value): self {
-        return ($value === null) ? new None() : new Some($value);
+        return new Some($value);
     }
     abstract public function isSome(): bool;
     abstract public function getOrElse(mixed $default): mixed;
@@ -145,8 +145,18 @@ final class TripMetrics implements Monoid {
             ($this->costCents + $other->costCents) / 100,
             $this->durationHours + $other->durationHours,
             $this->points + $other->points,
-            array_merge($this->items, $other->items)
+            self::mergeItems($this->items, $other->items)
         );
+    }
+
+    // Keeps non-colliding keys (e.g. identity's []) intact instead of array_merge's
+    // blanket renumbering; only reindexes on an actual integer-key collision.
+    private static function mergeItems(array $a, array $b): array {
+        $merged = $a;
+        foreach ($b as $k => $v) {
+            (is_int($k) && array_key_exists($k, $merged)) ? $merged[] = $v : $merged[$k] = $v;
+        }
+        return $merged;
     }
 
     public static function fold(array $list): self {
@@ -190,7 +200,22 @@ final class FreeCategoryPath {
         public readonly GraphNode $source,
         public readonly GraphNode $target,
         public readonly array $edges = []
-    ) {}
+    ) {
+        if (empty($edges)) {
+            if ($source->id !== $target->id) {
+                throw new InvalidArgumentException("Empty path must be an identity: source must equal target.");
+            }
+            return;
+        }
+        if ($edges[0]->source->id !== $source->id || $edges[count($edges) - 1]->target->id !== $target->id) {
+            throw new InvalidArgumentException("Path source/target must match the first/last edge.");
+        }
+        for ($i = 0; $i < count($edges) - 1; $i++) {
+            if ($edges[$i]->target->id !== $edges[$i + 1]->source->id) {
+                throw new InvalidArgumentException("Path edges must form a connected chain.");
+            }
+        }
+    }
 
     /**
      * Identity morphism id_u : u -> u (0 edges, neutral Monoid weight)
@@ -354,13 +379,19 @@ final class Itinerary {
         string $traceMsg = '',
         ?GraphEdge $graphEdge = null
     ): self {
+        if ($graphEdge !== null && $stepMetrics !== null && $stepMetrics != $graphEdge->weight) {
+            throw new InvalidArgumentException("Step metrics must match the traversed edge's weight.");
+        }
+
         $newMetrics = $stepMetrics ? $this->metrics->append($stepMetrics) : $this->metrics;
         $newTrace = $this->trace;
         if ($traceMsg !== '') $newTrace[] = $traceMsg;
 
         $newPath = $this->inducedPath;
         if ($graphEdge !== null) {
-            if (empty($newPath->edges)) {
+            // 'HUB' is the unresolved-origin sentinel (originAirport === 'ALL'): it has
+            // no real edges, so the first real edge is allowed to set the actual start.
+            if (empty($newPath->edges) && $newPath->source->id === 'HUB') {
                 $newPath = FreeCategoryPath::fromEdge($graphEdge);
             } else {
                 $composed = $newPath->compose(FreeCategoryPath::fromEdge($graphEdge));
