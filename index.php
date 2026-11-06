@@ -405,10 +405,11 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
     <meta name="theme-color" content="#00311f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=7.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=8.0">
 </head>
 <body>
+<a href="#builderForm" class="skip-link"><?= htmlspecialchars(t('skip_to_content')) ?></a>
 
 <header>
     <div class="brand">
@@ -416,9 +417,9 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
         <p><?= htmlspecialchars(t('brand_subtitle')) ?></p>
     </div>
     <div class="language-switcher" role="group" aria-label="Language selector">
-        <button type="button" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>" onclick="changeLanguage('en')">🇬🇧 EN</button>
-        <button type="button" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>" onclick="changeLanguage('es')">🇪🇸 ES</button>
-        <button type="button" class="lang-btn <?= $lang === 'lt' ? 'active' : '' ?>" onclick="changeLanguage('lt')">🇱🇹 LT</button>
+        <button type="button" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>" aria-current="<?= $lang === 'en' ? 'true' : 'false' ?>" onclick="changeLanguage('en')">🇬🇧 EN</button>
+        <button type="button" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>" aria-current="<?= $lang === 'es' ? 'true' : 'false' ?>" onclick="changeLanguage('es')">🇪🇸 ES</button>
+        <button type="button" class="lang-btn <?= $lang === 'lt' ? 'active' : '' ?>" aria-current="<?= $lang === 'lt' ? 'true' : 'false' ?>" onclick="changeLanguage('lt')">🇱🇹 LT</button>
     </div>
 </header>
 
@@ -454,21 +455,35 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             </div>
         </div>
 
+        <p class="price-notice"><?= htmlspecialchars(t('price_disclaimer_banner')) ?></p>
+
+        <?php $cityPhoto = ['Vilnius' => 'vilnius', 'Kaunas' => 'kaunas', 'Klaipėda' => 'klaipeda'][$city] ?? 'vilnius'; ?>
+        <div class="city-hero" style="background-image:url('img/cities/<?= $cityPhoto ?>.jpg');">
+            <div class="city-hero-overlay">
+                <strong><?= htmlspecialchars($city) ?></strong>
+                <span><?= htmlspecialchars(t('city_desc_' . $city)) ?></span>
+                <a href="#step1" class="hero-cta"><?= htmlspecialchars(t('hero_cta')) ?> <span aria-hidden="true">↓</span></a>
+            </div>
+        </div>
+
         <div class="city-tabs">
             <?php
             $destinations = [
-                'Vilnius'  => ['VNO', t('city_desc_Vilnius')],
-                'Kaunas'   => ['KUN', t('city_desc_Kaunas')],
-                'Klaipėda' => ['PLQ', t('city_desc_Klaipėda')],
+                'Vilnius'  => ['VNO', t('city_desc_Vilnius'), 'vilnius'],
+                'Kaunas'   => ['KUN', t('city_desc_Kaunas'), 'kaunas'],
+                'Klaipėda' => ['PLQ', t('city_desc_Klaipėda'), 'klaipeda'],
             ];
-            foreach ($destinations as $cName => [$cCode, $cDesc]):
+            foreach ($destinations as $cName => [$cCode, $cDesc, $cPhoto]):
             ?>
                 <div class="city-tab <?= $city === $cName ? 'active' : '' ?>" role="button" tabindex="0" aria-pressed="<?= $city === $cName ? 'true' : 'false' ?>"
+                     style="background-image:url('img/cities/<?= $cPhoto ?>_thumb.jpg');"
                      onclick="selectCity('<?= $cName ?>')"
                      onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectCity('<?= $cName ?>'); }">
-                    <em class="code"><?= $cCode ?></em>
-                    <strong><?= $cName ?></strong>
-                    <span><?= htmlspecialchars($cDesc) ?></span>
+                    <div class="city-tab-overlay">
+                        <em class="code"><?= $cCode ?></em>
+                        <strong><?= $cName ?></strong>
+                        <span><?= htmlspecialchars($cDesc) ?></span>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -532,13 +547,16 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
         </label>
 
         <!-- STEP 1: INTERNATIONAL FLIGHTS -->
-        <div class="step-title">
+        <div class="step-title" id="step1">
             <div><span class="step-badge">1</span> <?= htmlspecialchars(t('step_flights', ['city' => $city])) ?></div>
             <span class="sort-pill"><?= htmlspecialchars(t('sort_pill')) ?></span>
         </div>
         <div class="card-grid">
-            <div class="choice-card <?= $flightId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('flight_id', 'AUTO')">
+            <div class="choice-card photo-card <?= $flightId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('flight_id', 'AUTO')">
                 <input type="radio" name="flight_id" value="AUTO" <?= $flightId === 'AUTO' ? 'checked' : '' ?>>
+                <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
+                    <span class="card-thumb-icon" aria-hidden="true">✨</span>
+                </div>
                 <div class="card-select-area">
                     <span class="cheapest-ribbon"><?= htmlspecialchars(t('auto_select')) ?></span>
                     <div class="choice-top">
@@ -552,16 +570,19 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <?php foreach ($cityFlights as $idx => $f):
                 $cheapestPrice = round($f->cheapestOffer->priceEur * (1 - $discountRate), 2);
             ?>
-                <div class="choice-card <?= $flightId === $f->id ? 'selected' : '' ?>">
+                <div class="choice-card photo-card <?= $flightId === $f->id ? 'selected' : '' ?>">
                     <input type="radio" name="flight_id" value="<?= $f->id ?>" <?= $flightId === $f->id ? 'checked' : '' ?>>
                     <div class="card-select-area" onclick="selectRadio('flight_id', '<?= $f->id ?>')">
-                        <?php if ($idx === 0): ?>
-                            <span class="cheapest-ribbon"><?= htmlspecialchars(t('cheapest_flight_ribbon')) ?></span>
-                        <?php else: ?>
-                            <span style="font-size:0.75rem; color:var(--muted); font-weight:700;"><?= htmlspecialchars(t('option_number', ['num' => $idx + 1])) ?></span>
-                        <?php endif; ?>
+                        <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
+                            <span class="card-thumb-icon" aria-hidden="true"><?= $f->icon ?></span>
+                            <?php if ($idx === 0): ?>
+                                <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('cheapest_flight_ribbon')) ?></span>
+                            <?php else: ?>
+                                <span class="thumb-index"><?= htmlspecialchars(t('option_number', ['num' => $idx + 1])) ?></span>
+                            <?php endif; ?>
+                        </div>
                         <div class="choice-top">
-                            <strong><?= $f->icon ?> <?= htmlspecialchars($f->originCity) ?></strong>
+                            <strong><?= htmlspecialchars($f->originCity) ?></strong>
                             <span class="choice-price"><?= $fmtPrice($cheapestPrice) ?></span>
                         </div>
                         <div class="choice-meta">
@@ -589,7 +610,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.45rem;">
                                     <strong style="color:var(--lt-green);"><?= $fmtPrice($op) ?></strong>
-                                    <a href="<?= htmlspecialchars($offer->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn"><?= htmlspecialchars(t('book_button')) ?></a>
+                                    <a href="<?= htmlspecialchars($offer->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn" title="<?= htmlspecialchars(t('price_disclaimer_tooltip')) ?>"><?= htmlspecialchars(t('book_button')) ?></a>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -604,8 +625,11 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <span class="sort-pill"><?= htmlspecialchars(t('sort_pill')) ?></span>
         </div>
         <div class="card-grid">
-            <div class="choice-card <?= $hotelId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('hotel_id', 'AUTO')">
+            <div class="choice-card photo-card <?= $hotelId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('hotel_id', 'AUTO')">
                 <input type="radio" name="hotel_id" value="AUTO" <?= $hotelId === 'AUTO' ? 'checked' : '' ?>>
+                <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
+                    <span class="card-thumb-icon" aria-hidden="true">✨</span>
+                </div>
                 <div class="card-select-area">
                     <span class="cheapest-ribbon"><?= htmlspecialchars(t('auto_select')) ?></span>
                     <div class="choice-top">
@@ -619,16 +643,19 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <?php foreach ($cityHotels as $idx => $h):
                 $bestNightly = $h->cheapestOffer->priceEur;
             ?>
-                <div class="choice-card <?= $hotelId === $h->id ? 'selected' : '' ?>">
+                <div class="choice-card photo-card <?= $hotelId === $h->id ? 'selected' : '' ?>">
                     <input type="radio" name="hotel_id" value="<?= $h->id ?>" <?= $hotelId === $h->id ? 'checked' : '' ?>>
                     <div class="card-select-area" onclick="selectRadio('hotel_id', '<?= $h->id ?>')">
-                        <?php if ($idx === 0): ?>
-                            <span class="cheapest-ribbon"><?= htmlspecialchars(t('cheapest_hotel_ribbon')) ?></span>
-                        <?php else: ?>
-                            <span style="font-size:0.75rem; color:var(--muted); font-weight:700;"><?= htmlspecialchars(t('option_number', ['num' => $idx + 1])) ?></span>
-                        <?php endif; ?>
+                        <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
+                            <span class="card-thumb-icon" aria-hidden="true"><?= $h->icon ?></span>
+                            <?php if ($idx === 0): ?>
+                                <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('cheapest_hotel_ribbon')) ?></span>
+                            <?php else: ?>
+                                <span class="thumb-index"><?= htmlspecialchars(t('option_number', ['num' => $idx + 1])) ?></span>
+                            <?php endif; ?>
+                        </div>
                         <div class="choice-top">
-                            <strong><?= $h->icon ?> <?= htmlspecialchars($h->name) ?></strong>
+                            <strong><?= htmlspecialchars($h->name) ?></strong>
                             <span class="choice-price"><?= $fmtPrice($bestNightly) ?><?= htmlspecialchars(t('hotel_night')) ?></span>
                         </div>
                         <div class="choice-meta">
@@ -654,7 +681,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.45rem;">
                                     <strong style="color:var(--lt-green);"><?= $fmtPrice($offer->priceEur) ?><?= htmlspecialchars(t('hotel_night_short')) ?></strong>
-                                    <a href="<?= htmlspecialchars($offer->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn"><?= htmlspecialchars(t('ver_button')) ?></a>
+                                    <a href="<?= htmlspecialchars($offer->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn" title="<?= htmlspecialchars(t('price_disclaimer_tooltip')) ?>"><?= htmlspecialchars(t('ver_button')) ?></a>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -672,14 +699,17 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <?php foreach ($cityActivities as $idx => $act):
                 $checked = in_array($act->id, $activityIds, true);
             ?>
-                <div class="choice-card <?= $checked ? 'selected' : '' ?>">
+                <div class="choice-card photo-card <?= $checked ? 'selected' : '' ?>">
                     <label class="card-select-area" style="display:block;">
                         <input type="checkbox" name="activity_ids[]" value="<?= $act->id ?>" <?= $checked ? 'checked' : '' ?> onchange="submitForm()">
-                        <?php if ($idx === 0): ?>
-                            <span class="cheapest-ribbon"><?= htmlspecialchars(t('featured_activity_ribbon')) ?></span>
-                        <?php endif; ?>
+                        <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
+                            <span class="card-thumb-icon" aria-hidden="true"><?= $act->icon ?></span>
+                            <?php if ($idx === 0): ?>
+                                <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('featured_activity_ribbon')) ?></span>
+                            <?php endif; ?>
+                        </div>
                         <div class="choice-top">
-                            <strong><?= $act->icon ?> <?= htmlspecialchars($act->title) ?></strong>
+                            <strong><?= htmlspecialchars($act->title) ?></strong>
                             <span class="choice-price">+<?= $fmtPrice($act->pricePerPerson) ?></span>
                         </div>
                         <div class="choice-meta"><?= htmlspecialchars(t('activity_duration', ['duration' => $act->durationHours])) ?></div>
@@ -691,7 +721,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                     </label>
                     <div style="margin-top:0.55rem; border-top:1px dashed var(--line-strong); padding-top:0.45rem; display:flex; justify-content:space-between; align-items:center;">
                         <span style="font-size:0.78rem; color:var(--muted);"><?= htmlspecialchars(t('activity_official_tickets')) ?></span>
-                        <a href="<?= htmlspecialchars($act->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn"><?= htmlspecialchars(t('book_button')) ?></a>
+                        <a href="<?= htmlspecialchars($act->bookingUrl) ?>" target="_blank" rel="noopener" class="book-btn" title="<?= htmlspecialchars(t('price_disclaimer_tooltip')) ?>"><?= htmlspecialchars(t('book_button')) ?></a>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -772,7 +802,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                         </div>
                         <div class="receipt-sub">
                             <span><?= htmlspecialchars(t('receipt_provider')) ?> <strong><?= htmlspecialchars($item['provider']) ?></strong></span>
-                            <a href="<?= htmlspecialchars($item['url']) ?>" target="_blank" rel="noopener" class="book-btn">
+                            <a href="<?= htmlspecialchars($item['url']) ?>" target="_blank" rel="noopener" class="book-btn" title="<?= htmlspecialchars(t('price_disclaimer_tooltip')) ?>">
                                 <?= htmlspecialchars(t('receipt_book', ['provider' => $item['provider']])) ?>
                             </a>
                         </div>
@@ -838,6 +868,24 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
         <?php endif; ?>
     </div>
 </form>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <strong><?= htmlspecialchars(t('footer_university')) ?></strong>
+            <span><?= htmlspecialchars(t('footer_faculty')) ?></span>
+            <span><?= htmlspecialchars(t('footer_academic_line')) ?></span>
+            <span><?= htmlspecialchars(t('footer_supervisor')) ?></span>
+            <span><?= htmlspecialchars(t('footer_author')) ?> · © <?= date('Y') ?></span>
+        </div>
+        <div class="footer-links">
+            <a href="LaTeX_Report/mainDocument_EN.pdf" target="_blank" rel="noopener"><?= htmlspecialchars(t('footer_report_link')) ?></a>
+            <a href="tests/category_laws_test.php"><?= htmlspecialchars(t('footer_tests_link')) ?></a>
+        </div>
+    </div>
+    <p class="footer-disclaimer"><?= htmlspecialchars(t('footer_disclaimer')) ?></p>
+    <p class="footer-disclaimer">Destination photos: Vilnius &amp; Kaunas © <a href="https://commons.wikimedia.org/wiki/User:Diliff" target="_blank" rel="noopener" style="color:inherit;">David Iliff</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener" style="color:inherit;">CC BY-SA 3.0</a> · Klaipėda: public domain, via Wikimedia Commons.</p>
+</footer>
 
 <script src="js/main.js?v=7.0"></script>
 </body>

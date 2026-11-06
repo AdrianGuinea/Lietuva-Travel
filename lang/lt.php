@@ -177,4 +177,18 @@ return [
     'step4_msg' => 'Bendras kelio svoris M(Kelias) yra :total:, o tai viršija jūsų :budget: limitą.',
     'step4_fix' => 'Padidinkite biudžetą slankikliu, sumažinkite nakvynių skaičių arba įjunkite 15% studento nuolaidą.',
     'monad_short_circuit_explain' => 'Grafo kelio indukcija sustojo šioje briaunoje (Either::Left). Kleisli kategorijoje K(Either) netinkamos briaunos automatiškai nutraukia tolesnę kompoziciją.',
+
+    // Poraštė ir pasiekiamumas
+    'skip_to_content' => 'Peršokti į kelionės planuoklį',
+    'footer_academic_line' => 'Semestro projektas — Kategorijų teorija, pritaikyta programinės įrangos inžinerijoje',
+    'footer_university' => 'Vilniaus universitetas',
+    'footer_faculty' => 'Matematikos ir informatikos fakultetas',
+    'footer_supervisor' => 'Akademinis vadovas: prof. I. Grinis',
+    'footer_author' => 'Autorius: Adrián Guinea Pérez',
+    'footer_report_link' => '📄 Skaityti pilną patikros ataskaitą (PDF)',
+    'footer_tests_link' => '🧪 Paleisti 18/18 dėsnių patikros rinkinį',
+    'footer_disclaimer' => 'Projektas skirtas mokymo tikslams. Skrydžių, viešbučių ir pramogų kainos yra iliustracinės, o ne realaus laiko rezervacijos duomenys.',
+    'price_disclaimer_banner' => '🏷️ Orientacinės kainos šiai demonstracijai. Spustelėkite „Rezervuoti“ prie bet kurio pasiūlymo, kad pamatytumėte tikrą kainą teikėjo svetainėje.',
+    'price_disclaimer_tooltip' => 'Orientacinė kaina — atveria tikrą kainą teikėjo svetainėje',
+    'hero_cta' => 'Tyrinėti',
 ];

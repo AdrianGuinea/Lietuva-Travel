@@ -177,4 +177,18 @@ return [
     'step4_msg' => 'El peso total del camino M(Camino) es :total:, superando tu límite de :budget:.',
     'step4_fix' => 'Aumenta el presupuesto con la barra deslizante, reduce las noches o activa el 15% de Descuento Estudiante.',
     'monad_short_circuit_explain' => 'La inducción del camino en el grafo se detuvo en esta arista (Either::Left). En la categoría de Kleisli K(Either), las aristas inválidas cortocircuitan automáticamente la composición posterior.',
+
+    // Pie de página y accesibilidad
+    'skip_to_content' => 'Saltar al planificador de viaje',
+    'footer_academic_line' => 'Proyecto de Semestre — Teoría de Categorías aplicada a la Ingeniería del Software',
+    'footer_university' => 'Universidad de Vilna',
+    'footer_faculty' => 'Facultad de Matemáticas e Informática',
+    'footer_supervisor' => 'Supervisor académico: Prof. I. Grinis',
+    'footer_author' => 'Autor: Adrián Guinea Pérez',
+    'footer_report_link' => '📄 Leer el informe completo de verificación (PDF)',
+    'footer_tests_link' => '🧪 Ejecutar la suite de verificación de 18/18 leyes',
+    'footer_disclaimer' => 'Proyecto con fines educativos. Los precios de vuelos, hoteles y actividades son ilustrativos, no datos de reserva en tiempo real.',
+    'price_disclaimer_banner' => '🏷️ Precios de referencia para esta demo. Pulsa "Reservar" en cualquier oferta para ver el precio real en la web del proveedor.',
+    'price_disclaimer_tooltip' => 'Precio de referencia — abre el precio real en la web del proveedor',
+    'hero_cta' => 'Explorar',
 ];

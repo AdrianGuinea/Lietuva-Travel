@@ -17,8 +17,8 @@
     --bg: var(--paper);
     --text: var(--ink);
     --border: var(--line);
-    --font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-display: 'Barlow Condensed', 'Arial Narrow', 'Barlow', sans-serif;
+    --font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Quattrocento', Georgia, serif;
     --ease: cubic-bezier(.2, .7, .2, 1);
 }
 
@@ -40,13 +40,38 @@ code {
 }
 :focus-visible { outline: 2px solid var(--lt-yellow); outline-offset: 2px; }
 
+/* ---------- Accesibilidad: salto de contenido y carga ---------- */
+.skip-link {
+    position: absolute; left: -9999px; top: 0; z-index: 1000;
+    background: var(--lt-yellow); color: var(--green-deep);
+    padding: .65rem 1.1rem; font-weight: 700; border-radius: 0 0 8px 0;
+}
+.skip-link:focus { left: 0; }
+
+body.is-loading { cursor: wait; }
+body.is-loading::after {
+    content: ""; position: fixed; inset: 0; z-index: 9998;
+    background: rgba(16, 35, 28, .35);
+}
+body.is-loading::before {
+    content: ""; position: fixed; top: 50%; left: 50%; z-index: 9999;
+    width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, .3); border-top-color: var(--lt-yellow);
+    animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .pulse, body.is-loading::before { animation: none; }
+}
+
 /* ---------- Cabecera ---------- */
 header {
-    position: relative;
+    position: sticky; top: 0; z-index: 50;
     background: var(--green-deep); color: #fff;
     padding: 1.5rem 2rem 1.6rem;
     display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;
 }
+#step1 { scroll-margin-top: 110px; }
 header::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px;
     background: linear-gradient(90deg,
@@ -72,11 +97,11 @@ header::after {
 .language-switcher {
     display: flex; gap: .4rem;
     background: rgba(255, 255, 255, .08); padding: .3rem;
-    border-radius: 8px; border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2);
 }
 .lang-btn {
     cursor: pointer; background: transparent; border: 0; color: #cfe3d8;
-    padding: .35rem .65rem; border-radius: 6px; font: 600 .84rem var(--font-body);
+    padding: .35rem .75rem; border-radius: 999px; font: 600 .84rem var(--font-body);
     display: inline-flex; align-items: center; gap: .35rem; transition: background .15s, color .15s;
 }
 .lang-btn:hover { background: rgba(255, 255, 255, .14); color: #fff; }
@@ -108,27 +133,49 @@ header::after {
 }
 .panel {
     background: var(--card); border: 1px solid var(--line);
-    border-radius: 16px; padding: 1.5rem;
+    border-radius: 16px; padding: 1.75rem;
 }
 
-/* ---------- Destinos ---------- */
+/* ---------- Foto de portada del destino (estilo buscador de alojamientos) ---------- */
+.city-hero {
+    position: relative; height: 230px; margin-bottom: 1rem; border-radius: 14px; overflow: hidden;
+    background-size: cover; background-position: center; border: 1px solid var(--line);
+}
+.city-hero::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0, 49, 31, .05) 30%, rgba(0, 49, 31, .88) 100%);
+}
+.city-hero-overlay { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: .9rem 1.1rem 1rem; color: #fff; }
+.city-hero-overlay strong { display: block; font: 700 2.1rem/1.1 var(--font-display); }
+.city-hero-overlay span { display: block; font-size: .92rem; color: #cfe3d8; margin-top: .2rem; }
+.hero-cta {
+    display: inline-flex; align-items: center; gap: .4rem; margin-top: .7rem;
+    padding: .5rem 1.15rem; border-radius: 999px; border: 1.5px solid #fff; color: #fff;
+    font: 600 .86rem var(--font-body); text-decoration: none; transition: background .15s, color .15s;
+}
+.hero-cta:hover { background: #fff; color: var(--green-deep); }
+
+/* ---------- Destinos (tarjetas con foto, al estilo buscador de alojamientos) ---------- */
 .city-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; margin-bottom: 1.2rem; }
 .city-tab {
-    display: flex; flex-direction: column; cursor: pointer;
-    background: var(--card); border: 1.5px solid var(--line); border-radius: 10px;
-    padding: .7rem .95rem .8rem;
-    transition: background .2s, border-color .2s, color .2s;
+    position: relative; display: block; cursor: pointer; min-height: 118px; overflow: hidden;
+    background-color: var(--green-deep); background-size: cover; background-position: center;
+    border: 1.5px solid var(--line); border-radius: 10px;
+    transition: border-color .2s, transform .15s var(--ease), box-shadow .15s var(--ease);
 }
-.city-tab:hover { border-color: var(--lt-green); }
+.city-tab::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0, 49, 31, .05) 30%, rgba(0, 49, 31, .88) 100%);
+}
+.city-tab:hover { border-color: var(--lt-green); transform: translateY(-2px); box-shadow: 0 10px 20px -14px rgba(0, 49, 31, .35); }
+.city-tab-overlay { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; padding: .65rem .8rem .7rem; }
 .city-tab .code {
-    font: 700 2.2rem/1 var(--font-display); letter-spacing: .02em;
-    color: var(--lt-green); font-style: normal;
+    font: 700 1.5rem/1 var(--font-display); letter-spacing: .02em;
+    color: var(--lt-yellow); font-style: normal;
 }
-.city-tab strong { font-size: 1.08rem; font-weight: 600; margin-top: .2rem; }
-.city-tab span { font-size: .86rem; color: var(--muted); }
-.city-tab.active { background: var(--lt-green); border-color: var(--lt-green); color: #fff; }
-.city-tab.active .code { color: var(--lt-yellow); }
-.city-tab.active span { color: #cfe8dc; }
+.city-tab strong { font-size: 1.02rem; font-weight: 600; margin-top: .15rem; color: #fff; }
+.city-tab span { font-size: .8rem; color: #cfe3d8; }
+.city-tab.active { border-color: var(--lt-yellow); box-shadow: 0 0 0 2px var(--lt-yellow) inset; }
 
 /* ---------- Ajustes ---------- */
 .settings-bar {
@@ -182,13 +229,13 @@ header::after {
 }
 
 /* ---------- Tarjetas de elección ---------- */
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: .95rem; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.15rem; }
 .choice-card {
     position: relative; display: flex; flex-direction: column; justify-content: space-between;
     background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: .95rem 1rem;
-    transition: border-color .15s, background .15s;
+    transition: border-color .15s, background .15s, transform .15s var(--ease), box-shadow .15s var(--ease);
 }
-.choice-card:hover { border-color: var(--line-strong); }
+.choice-card:hover { border-color: var(--line-strong); transform: translateY(-2px); box-shadow: 0 12px 22px -16px rgba(0, 49, 31, .3); }
 .choice-card.selected {
     border-color: var(--lt-green); background: var(--lt-green-light);
     box-shadow: inset 5px 0 0 var(--lt-green);
@@ -212,6 +259,25 @@ header::after {
     display: inline-block; margin-bottom: .4rem; padding: 1px 8px; border-radius: 3px;
     background: var(--lt-yellow); color: #3b2800; font: 600 .8rem var(--font-body);
 }
+
+/* ---------- Miniatura de foto en tarjetas de hotel (estilo buscador de alojamientos) ---------- */
+.choice-card.photo-card { padding: 0 1rem .95rem; }
+.card-thumb {
+    position: relative; height: 104px; margin: 0 -1rem .75rem; border-radius: 9px 9px 0 0;
+    background-color: var(--green-deep); background-size: cover; background-position: center;
+    display: flex; align-items: flex-end;
+}
+.card-thumb::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(180deg, rgba(0, 49, 31, 0) 45%, rgba(0, 49, 31, .6) 100%);
+}
+.card-thumb-icon { position: relative; z-index: 1; margin: .5rem; font-size: 1.5rem; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .5)); }
+.thumb-ribbon { position: absolute; top: .45rem; right: .5rem; z-index: 1; margin: 0; }
+.thumb-index {
+    position: absolute; top: .45rem; right: .5rem; z-index: 1;
+    font-size: .72rem; font-weight: 700; color: #fff; background: rgba(0, 49, 31, .55);
+    padding: 1px 7px; border-radius: 4px;
+}
 .tag-warn, .tag-ok {
     display: inline-block; margin-top: .4rem; padding: 1px 8px; border-radius: 3px;
     font-size: .82rem; font-weight: 600;
@@ -233,7 +299,7 @@ details.deals-drawer summary::-webkit-details-marker { display: none; }
 }
 .offer-row.rank-1 { background: var(--lt-green-light); border-color: #9bd2b5; }
 .book-btn {
-    display: inline-block; padding: .3rem .7rem; border-radius: 6px;
+    display: inline-block; padding: .3rem .85rem; border-radius: 999px;
     background: var(--green-deep); color: #fff; text-decoration: none;
     font-weight: 600; font-size: .84rem; white-space: nowrap; transition: background .15s;
 }
@@ -308,6 +374,9 @@ details.prof-box summary { cursor: pointer; font-weight: 700; color: var(--lt-ye
     .layout { grid-template-columns: 1fr; }
     .sticky-panel { position: static; max-height: none; overflow: hidden; }
 }
+@media (max-width: 480px) {
+    .pass-meta { grid-template-columns: repeat(2, 1fr); gap: .7rem; }
+}
 
 /* ---------- Barra de Escenarios Rápidos y Suite de Pruebas ---------- */
 .demo-bar {
@@ -333,8 +402,8 @@ details.prof-box summary { cursor: pointer; font-weight: 700; color: var(--lt-ye
     background: #fff;
     border: 1.5px solid var(--line-strong);
     color: var(--ink);
-    padding: .32rem .68rem;
-    border-radius: 6px;
+    padding: .32rem .8rem;
+    border-radius: 999px;
     font-size: .82rem;
     font-weight: 600;
     transition: all .15s;
@@ -347,14 +416,24 @@ details.prof-box summary { cursor: pointer; font-weight: 700; color: var(--lt-ye
     text-decoration: none;
     background: var(--green-deep);
     color: var(--lt-yellow);
-    padding: .36rem .78rem;
-    border-radius: 6px;
+    padding: .36rem .9rem;
+    border-radius: 999px;
     font-size: .82rem;
     font-weight: 700;
     transition: opacity .15s;
 }
 .suite-link:hover {
     opacity: .9;
+}
+.price-notice {
+    margin: 0 0 1.1rem;
+    padding: .5rem .75rem;
+    background: var(--amber-tint);
+    color: var(--amber-ink);
+    border: 1px solid #f3d08a;
+    border-radius: 8px;
+    font-size: .82rem;
+    font-weight: 600;
 }
 
 /* ---------- Logo de agencia con avión en la cabecera ---------- */
@@ -390,4 +469,32 @@ details.prof-box summary { cursor: pointer; font-weight: 700; color: var(--lt-ye
     color: #4ade80;
     line-height: 1.45;
     word-break: break-word;
+}
+
+/* ---------- Pie de página institucional (VU) ---------- */
+.site-footer {
+    position: relative; margin-top: 3rem; padding: 2.2rem 2rem 1.4rem;
+    background: var(--green-deep); color: #cfe3d8;
+}
+.site-footer::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
+    background: linear-gradient(90deg,
+        var(--lt-yellow) 0 33.34%, var(--lt-green) 33.34% 66.67%, var(--lt-red) 66.67% 100%);
+}
+.footer-inner {
+    max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 1.6rem;
+}
+.footer-brand strong { display: block; color: #fff; font: 600 1.1rem var(--font-display); }
+.footer-brand span { display: block; color: #8fb3a0; font-size: .84rem; margin-top: .15rem; }
+.footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+.footer-links a { color: #cfe3d8; text-decoration: none; font-size: .86rem; font-weight: 600; transition: color .15s; }
+.footer-links a:hover { color: var(--lt-yellow); }
+.footer-disclaimer {
+    max-width: 1280px; margin: 1.3rem auto 0; padding-top: 1rem; border-top: 1px solid #163325;
+    font-size: .76rem; color: #6f8f80; text-align: center;
+}
+@media (max-width: 600px) {
+    .footer-inner { flex-direction: column; }
+    .footer-links { align-items: flex-start; }
 }

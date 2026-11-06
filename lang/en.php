@@ -177,4 +177,18 @@ return [
     'step4_msg' => 'Your total path weight M(Path) is :total:, exceeding your maximum budget of :budget:.',
     'step4_fix' => 'Slide the Max Budget higher, reduce the number of nights, or enable the 15% Student Discount.',
     'monad_short_circuit_explain' => 'Graph path induction halted at this edge (Either::Left). In the Kleisli category K(Either), invalid edges short-circuit downstream composition automatically.',
+
+    // Footer & Accessibility
+    'skip_to_content' => 'Skip to itinerary builder',
+    'footer_academic_line' => 'Semester Project — Category Theory applied to Software Engineering',
+    'footer_university' => 'Vilnius University',
+    'footer_faculty' => 'Faculty of Mathematics and Informatics',
+    'footer_supervisor' => 'Academic supervisor: Prof. I. Grinis',
+    'footer_author' => 'Author: Adrián Guinea Pérez',
+    'footer_report_link' => '📄 Read the full verification report (PDF)',
+    'footer_tests_link' => '🧪 Run the 18/18 law verification suite',
+    'footer_disclaimer' => 'Built for educational purposes. Flight, hotel and activity prices are illustrative, not live booking data.',
+    'price_disclaimer_banner' => '🏷️ Reference prices for this demo. Click "Book" on any offer to see the live price on the provider\'s site.',
+    'price_disclaimer_tooltip' => 'Reference price — opens the live price on the provider\'s site',
+    'hero_cta' => 'Explore',
 ];
