@@ -1,9 +1,9 @@
 {
   "index.php": {
-    "mtime": 1793795643.0053318,
-    "seen": 1793893564.047177,
-    "ast_hash": "01f6f390a90de1b11c175109dc4b03a2",
-    "semantic_hash": "01f6f390a90de1b11c175109dc4b03a2"
+    "mtime": 1793961244.8517063,
+    "seen": 1793961395.0468128,
+    "ast_hash": "13d310eafafad3c8be56d22e48dabb2e",
+    "semantic_hash": "13d310eafafad3c8be56d22e48dabb2e"
   },
   "js/main.js": {
     "mtime": 1792313513.0,
@@ -12,28 +12,28 @@
     "semantic_hash": "d0f3e318bd3cbfe01d58e8d4d865139e"
   },
   "lang/en.php": {
-    "mtime": 1792447280.0,
-    "seen": 1793893564.0472033,
-    "ast_hash": "41ea649d26a12ac8768631c92641e088",
-    "semantic_hash": "41ea649d26a12ac8768631c92641e088"
+    "mtime": 1793959988.274851,
+    "seen": 1793961037.6295967,
+    "ast_hash": "80a70a31766e88c3a7ee7d54d49e1afc",
+    "semantic_hash": "80a70a31766e88c3a7ee7d54d49e1afc"
   },
   "lang/es.php": {
-    "mtime": 1792447280.0,
-    "seen": 1793893564.0472083,
-    "ast_hash": "db87a0b6afbde8ced5f683666b873e41",
-    "semantic_hash": "db87a0b6afbde8ced5f683666b873e41"
+    "mtime": 1793959992.7812076,
+    "seen": 1793961037.6296017,
+    "ast_hash": "f80af2922bab7adaeea681faee961864",
+    "semantic_hash": "f80af2922bab7adaeea681faee961864"
   },
   "lang/lt.php": {
-    "mtime": 1792447280.0,
-    "seen": 1793893564.0472126,
-    "ast_hash": "b2a5f056372baa760b458a101ccd5de1",
-    "semantic_hash": "b2a5f056372baa760b458a101ccd5de1"
+    "mtime": 1793959999.2614062,
+    "seen": 1793961037.6296046,
+    "ast_hash": "74e748eb4cd48778f92709e8d2653886",
+    "semantic_hash": "74e748eb4cd48778f92709e8d2653886"
   },
   "src/CategoryTheory.php": {
-    "mtime": 1793795643.0053318,
-    "seen": 1793893564.047216,
-    "ast_hash": "c4087d7104f106bb8fb7bbc632107307",
-    "semantic_hash": "c4087d7104f106bb8fb7bbc632107307"
+    "mtime": 1793890797.039747,
+    "seen": 1793958851.362449,
+    "ast_hash": "db3d45523d2651b5731c9923898f67e8",
+    "semantic_hash": "db3d45523d2651b5731c9923898f67e8"
   },
   "tests/category_laws_test.php": {
     "mtime": 1793795643.0053318,
@@ -64,5 +64,11 @@
     "seen": 1793893564.0472322,
     "ast_hash": "1278ea78da8df9808e25495d83d507b7",
     "semantic_hash": "1278ea78da8df9808e25495d83d507b7"
+  },
+  "LietuvaTravel_regression_checks.php": {
+    "mtime": 1793890988.5294137,
+    "seen": 1793958851.3624003,
+    "ast_hash": "b2b7f36c42420d8cf9b24a819bf9ccf0",
+    "semantic_hash": "b2b7f36c42420d8cf9b24a819bf9ccf0"
   }
 }
