@@ -7,8 +7,9 @@ The built-in PHP development server was started against the corrected codebase, 
 function fetchLiveJsonOption(string $url): Option {
     $ctx = stream_context_create([...]);
     $raw = @file_get_contents($url, false, $ctx);
-    return ($raw === false ? new None() : new Some($raw))
-        ->fmap(fn(string $json) => json_decode($json, true));
+    if ($raw === false) return new None();
+    $decoded = json_decode($raw, true);
+    return $decoded === null ? new None() : new Some($decoded);
 }
 \end{lstlisting}
 
@@ -28,15 +29,15 @@ grep -iE "Fatal error|TypeError|Warning" resp_usd.html
 The default request returned \texttt{HTTP 200}. The \texttt{USD} request's response body contained \texttt{LIVE Open-Meteo} (twice -- once per weather read on the page) and, in the currency-exchange banner, a genuine live rate rather than the offline fallback:
 \begin{lstlisting}
 <strong>ECB Exchange Rate:</strong>
-<span>1 EUR = 1.1179 USD</span>
+<span>1 EUR = 1.1224 USD</span>
 \end{lstlisting}
 No occurrence of \texttt{Fatal error}, \texttt{TypeError}, \texttt{Offline Cache}, or \texttt{Fallback} appeared in either response body or in the PHP development server's own log, which recorded clean \texttt{[200]} responses for both requests:
 \begin{lstlisting}[language=bash]
-[...] 127.0.0.1:51838 Accepted
-[...] 127.0.0.1:51838 [200]: POST /index.php
-[...] 127.0.0.1:51838 Closing
+[...] 127.0.0.1:58580 Accepted
+[...] 127.0.0.1:58580 [200]: POST /index.php
+[...] 127.0.0.1:58580 Closing
 \end{lstlisting}
 
 \subsection{Why This Matters}
 
-Before the fix, \texttt{Option::pure(\$raw)} treated a \texttt{false} \texttt{\$raw} (a failed fetch) and a string \texttt{\$raw} (a successful fetch) identically whenever the application code called \texttt{pure} directly on the raw result -- which it previously did. Removing the \texttt{false}-as-absence special case from \texttt{Option::pure} without touching this call site would have made a \emph{successful} fetch behave correctly (since \texttt{Option::pure(\$raw)} would now wrap any non-null string as before) but would have broken a \emph{failed} fetch in a new way: \texttt{Option::pure(false)} would now produce \texttt{Some(false)} instead of \texttt{None}, and the subsequent \texttt{->fmap(fn(string \$json) => ...)} would be invoked with \texttt{\$json = false}, which violates the closure's \texttt{string} type declaration under \texttt{declare(strict\_types=1)} and throws a \texttt{TypeError} at runtime -- turning a graceful offline fallback into a fatal error on every network hiccup. This is exactly the kind of regression that a purely static fix, verified only against hand-picked values, can introduce without anyone noticing until the live service degrades. The explicit sentinel check shown above (\texttt{\$raw === false ? new None() : new Some(\$raw)}) was therefore written and then exercised against the two real external services before this report was finalised, rather than left as an untested consequence of the monad-law fix.
+Before the fix, \texttt{Option::pure(\$raw)} treated a \texttt{false} \texttt{\$raw} (a failed fetch) and a string \texttt{\$raw} (a successful fetch) identically whenever the application code called \texttt{pure} directly on the raw result -- which it previously did. Removing the \texttt{false}-as-absence special case from \texttt{Option::pure} without touching this call site would have made a \emph{successful} fetch behave correctly (since \texttt{Option::pure(\$raw)} would now wrap any non-null string as before) but would have broken a \emph{failed} fetch in a new way: \texttt{Option::pure(false)} would now produce \texttt{Some(false)} instead of \texttt{None}, and a subsequent \texttt{fmap} expecting a decoded payload would be invoked against that \texttt{false} value instead of short-circuiting -- turning a graceful offline fallback into a runtime error on every network hiccup. This is exactly the kind of regression that a purely static fix, verified only against hand-picked values, can introduce without anyone noticing until the live service degrades. The explicit sentinel check shown above (\texttt{if (\$raw === false) return new None();}, followed by an explicit \texttt{null}-check on the decoded JSON so malformed responses also degrade to \texttt{None} rather than \texttt{Some(null)}) was therefore written and then exercised against the two real external services before this report was finalised, rather than left as an untested consequence of the monad-law fix.

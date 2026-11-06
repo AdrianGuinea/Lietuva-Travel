@@ -77,8 +77,9 @@ public static function pure(mixed $value): self {
 One caller, \texttt{fetchLiveJsonOption()} in \texttt{index.php}, had silently relied on the old double meaning: \texttt{file\_get\_contents()} returns the sentinel \texttt{false} on failure, and the code built an \texttt{Option} from it via \texttt{Option::pure(\$raw)}. Since \texttt{pure} no longer treats \texttt{false} as absence, that call site was changed to test the sentinel explicitly instead of overloading a general-purpose constructor with a local, API-specific meaning:
 \begin{lstlisting}[caption={index.php -- explicit sentinel check instead of overloaded pure()}]
 $raw = @file_get_contents($url, false, $ctx);
-return ($raw === false ? new None() : new Some($raw))
-    ->fmap(fn(string $json) => json_decode($json, true));
+if ($raw === false) return new None();
+$decoded = json_decode($raw, true);
+return $decoded === null ? new None() : new Some($decoded);
 \end{lstlisting}
 This call site, and every other place in the project that constructs or consumes an \texttt{Option}, is examined in full in the audit of Section~\ref{sec:audit}, and the fix is exercised against the two real external services it talks to in Section~\ref{sec:verification}.
 
