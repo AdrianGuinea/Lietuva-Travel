@@ -358,6 +358,9 @@ if (!in_array($city, ['Vilnius', 'Kaunas', 'Klaipėda'], true)) {
 $originAirport = $_POST['origin_airport'] ?? 'ALL';
 $travelDate = $_POST['travel_date'] ?? date('Y-m-d', strtotime('+7 days'));
 $currency = $_POST['currency'] ?? 'EUR';
+if (!in_array($currency, ['EUR', 'USD', 'GBP', 'PLN'], true)) {
+    $currency = 'EUR';
+}
 $nights = max(1, min(14, (int)($_POST['nights'] ?? 2)));
 $travelers = max(1, min(6, (int)($_POST['travelers'] ?? 1)));
 $flightId = $_POST['flight_id'] ?? 'AUTO';
@@ -543,7 +546,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
         <label class="toggle">
             <input type="checkbox" name="is_student" <?= $isStudent ? 'checked' : '' ?> onchange="submitForm()">
             <span class="toggle-ui" aria-hidden="true"></span>
-            <span class="toggle-text"><?= t('student_discount') ?></span>
+            <span class="toggle-text"><?= htmlspecialchars(t('student_discount')) ?></span>
         </label>
 
         <!-- STEP 1: INTERNATIONAL FLIGHTS -->
