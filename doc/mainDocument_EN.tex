@@ -153,7 +153,7 @@ $newPath = $composed->getValue();
 
 \subsection{Regression Coverage}\label{sec:coverage}
 
-Each fix above is paired with one new assertion in \texttt{tests/category\_laws\_test.php}, reproducing Prof.~Grinis' exact examples: \texttt{Some(false)} round-tripping through \texttt{bind(Option::pure)}; the $a=0.004,\,b=0.004,\,c=0.005$ monoid grouping; and a two-step \texttt{Itinerary::advance()} call with a deliberately mismatched edge, asserting that it throws. The full code of all three assertions is reproduced in Appendix~\ref{app:tests}. Running \texttt{php tests/category\_laws\_test.php} against the corrected code reports \textbf{18/18} laws verified (up from the previous 15/15, which had missed all three cases above).
+Each fix above is paired with one new assertion in \texttt{tests/category\_laws\_test.php}, reproducing Prof.~Grinis' exact examples: \texttt{Some(false)} round-tripping through \texttt{bind(Option::pure)}; the $a=0.004,\,b=0.004,\,c=0.005$ monoid grouping; and a two-step \texttt{Itinerary::advance()} call with a deliberately mismatched edge, asserting that it throws. The full code of all three assertions is reproduced in Appendix~\ref{app:tests}, and running \texttt{php tests/category\_laws\_test.php} against the corrected code confirms all three now pass. Separately, the project's additional invariant suite, \texttt{LietuvaTravel\_regression\_checks.php}, exercises the \texttt{Option} monad, the \texttt{TripMetrics} monoid, and the free-category path/itinerary machinery under further edge-case inputs (nulls, sparse arrays, mismatched graph edges) and reports \textbf{10/10} checks passing.
 
 \newpage
 \section{Live Verification Against External Services}\label{sec:verification}

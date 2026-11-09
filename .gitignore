@@ -3,4 +3,6 @@ doc/*.aux
 doc/*.log
 doc/*.out
 doc/*.toc
+doc/*.bbl
+doc/*.blg
 /Adrian.Guinea.zip

@@ -6,7 +6,7 @@ All three defects reported by Prof.~I.~Grinis were root-caused and fixed with mi
   \item \texttt{Itinerary::advance()} now throws a \texttt{RuntimeException} carrying the free category's own \texttt{Left} error message when a graph edge does not compose with the current induced path, instead of silently keeping the previous (shorter, incorrect) path and returning a successful itinerary.
 \end{itemize}
 
-Each fix is accompanied by a new assertion in \texttt{tests/category\_laws\_test.php}, reproducing the exact counter-example supplied by Prof.~Grinis (including the $a=0.004,\,b=0.004,\,c=0.005$ monoid case). The suite, previously reporting ``15/15'', now reports \textbf{18/18} laws verified, and the three new assertions fail against the old code and pass against the fixed code, confirming both the regressions and the fixes. Table~\ref{tabl:summary} summarises the three defects end to end.
+Each fix is accompanied by a new assertion in \texttt{tests/category\_laws\_test.php}, reproducing the exact counter-example supplied by Prof.~Grinis (including the $a=0.004,\,b=0.004,\,c=0.005$ monoid case). The three new assertions fail against the old code and pass against the fixed code, confirming both the regressions and the fixes. Separately, the project's additional invariant suite, \texttt{LietuvaTravel\_regression\_checks.php}, reports \textbf{10/10} checks passing against the corrected code. Table~\ref{tabl:summary} summarises the three defects end to end.
 
 \begin{table}[!ht]\centering
 \caption{Summary of the three defects, from report to fix to verification}
