@@ -1,0 +1,51 @@
+LIETUVA TRAVEL v6.2 - INSTRUCCIONES DE EJECUCION
+==================================================
+
+No existe un binario compilado: la aplicacion es un script PHP que se
+interpreta directamente, no requiere paso de compilacion.
+
+REQUISITOS
+-----------
+- PHP 8.1 o superior, con la extension allow_url_fopen habilitada
+  (necesaria para las llamadas a las APIs remotas descritas abajo).
+- Conexion a internet (la app consulta APIs externas en tiempo real).
+
+COMO EJECUTAR EL PROTOTIPO
+---------------------------
+1. Desde la carpeta src/ del paquete, lanzar el servidor embebido de PHP:
+
+       cd src
+       php -S localhost:8001
+
+2. Abrir en el navegador:
+
+       http://localhost:8001/index.php
+
+3. (Opcional) Ejecutar la suite de verificacion matematica (18/18 leyes
+   de Teoria de Categorias) y los chequeos de regresion adicionales:
+
+       php tests/category_laws_test.php
+       php LietuvaTravel_regression_checks.php
+
+RECURSOS REMOTOS UTILIZADOS
+-----------------------------
+La aplicacion depende de dos servicios HTTP publicos, sin necesidad de
+clave de API ni registro:
+
+1. Open-Meteo (https://open-meteo.com)
+   - Uso: previsión meteorológica en tiempo real para las ciudades
+     lituanas (Vilnius, Kaunas, Klaipeda).
+   - Conexion: peticion HTTP GET anonima sobre HTTPS, respuesta JSON.
+   - No requiere autenticacion ni limite de uso para este volumen de
+     peticiones.
+
+2. Frankfurter / ECB (https://www.frankfurter.app)
+   - Uso: tipos de cambio de divisas en tiempo real para el calculo
+     de precios.
+   - Conexion: peticion HTTP GET anonima sobre HTTPS, respuesta JSON.
+   - Datos publicados por el Banco Central Europeo, sin autenticacion.
+
+Si ambos servicios son inaccesibles (p.ej. sin conexion a internet),
+la aplicacion degrada el flujo mediante el monad Option/Either descrito
+en el informe (doc/mainDocument_EN.pdf), mostrando un error controlado
+en lugar de fallar silenciosamente.

@@ -14,7 +14,7 @@ declare(strict_types=1);
  * ============================================================================
  */
 
-require_once __DIR__ . '/../src/CategoryTheory.php';
+require_once __DIR__ . '/../CategoryTheory.php';
 
 $results = [];
 function assertLaw(string $category, string $lawName, string $formula, bool $condition, string $details): void {

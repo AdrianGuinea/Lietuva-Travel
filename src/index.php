@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/src/CategoryTheory.php';
+require_once __DIR__ . '/CategoryTheory.php';
 
 // 0. LANGUAGE MANAGEMENT (POST > GET > COOKIE > Default 'en')
 $lang = $_POST['lang'] ?? $_GET['lang'] ?? $_COOKIE['lang'] ?? 'en';

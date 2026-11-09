@@ -1,11 +1,11 @@
 <?php
 /**
  * Additional mathematical and invariant checks for Lietuva Travel v6.2.
- * Place this file in the project root (beside index.php), then run:
+ * Place this file beside index.php (src/), then run:
  * php LietuvaTravel_regression_checks.php
  */
 declare(strict_types=1);
-require_once __DIR__ . '/src/CategoryTheory.php';
+require_once __DIR__ . '/CategoryTheory.php';
 
 $results = [];
 function check(string $name, bool $ok, string $detail): void {

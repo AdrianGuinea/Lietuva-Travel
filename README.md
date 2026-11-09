@@ -51,22 +51,28 @@ Lietuva Travel helps users plan trips to Lithuanian destinations (Vilnius, Kauna
 
 ```text
 Lietuva-Travel/
-├── index.php                 # Main application logic and HTML UI
-├── src/
-│   └── CategoryTheory.php    # Core categorical logic and Graph Inductors
-├── tests/
-│   └── category_laws_test.php# 18/18 Mathematical laws test suite
-├── lang/
-│   ├── en.php                # English translations
-│   ├── es.php                # Spanish translations
-│   └── lt.php                # Lithuanian translations
-├── css/
-│   └── style.css             # Application styling
-├── js/
-│   └── main.js               # Frontend interactions
-├── img/
-│   └── favicon.svg           # Application icons
-└── README.md                 # This file
+├── README.txt                # Submission-format author + summary
+├── doc/
+│   ├── mainDocument_EN.pdf    # Compiled report
+│   └── mainDocument_EN.tex    # LaTeX source (+ supporting .tex/.bib/.sty)
+├── bin/
+│   └── EJECUCION.txt          # How to run + remote APIs used
+└── src/
+    ├── index.php              # Main application logic and HTML UI
+    ├── CategoryTheory.php     # Core categorical logic and Graph Inductors
+    ├── LietuvaTravel_regression_checks.php
+    ├── tests/
+    │   └── category_laws_test.php  # 18/18 Mathematical laws test suite
+    ├── lang/
+    │   ├── en.php             # English translations
+    │   ├── es.php             # Spanish translations
+    │   └── lt.php             # Lithuanian translations
+    ├── css/
+    │   └── style.css          # Application styling
+    ├── js/
+    │   └── main.js            # Frontend interactions
+    └── img/
+        └── favicon.svg        # Application icons
 
 ```
 
@@ -78,9 +84,9 @@ Lietuva-Travel/
 
 ## Usage
 
-1. Start the PHP server: `php -S localhost:8001`
+1. Start the PHP server: `cd src && php -S localhost:8001`
 2. Access via browser: `http://localhost:8001`
-3. Run mathematical proofs: `php tests/category_laws_test.php`
+3. Run mathematical proofs: `php tests/category_laws_test.php` (from `src/`)
 4. The application validates each step and shows:
    - Selected itinerary with pricing breakdown and visual graph path.
    - Any validation errors with suggested fixes and categorical traces.
