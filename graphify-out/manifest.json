@@ -1,9 +1,9 @@
 {
   "src/CategoryTheory.php": {
-    "mtime": 1793890797.039747,
-    "seen": 1793958851.362449,
-    "ast_hash": "db3d45523d2651b5731c9923898f67e8",
-    "semantic_hash": "db3d45523d2651b5731c9923898f67e8"
+    "mtime": 1794483082.8646698,
+    "seen": 1794483107.0354323,
+    "ast_hash": "216ee9075f51315ac421ed2b8716d6dc",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1794237259.8931105,
@@ -72,10 +72,10 @@
     "semantic_hash": "e1a5b2aadd7aba2c50bffcb71138a56e"
   },
   "doc/mainDocument_EN.pdf": {
-    "mtime": 1794228348.5909076,
-    "seen": 1794237868.2617466,
-    "ast_hash": "38a6a528b471c85457dc8908f9593c00",
-    "semantic_hash": "38a6a528b471c85457dc8908f9593c00"
+    "mtime": 1794239956.0794482,
+    "seen": 1794483107.0354931,
+    "ast_hash": "d79966177c19ccc3152593f511ddda05",
+    "semantic_hash": ""
   },
   "src/img/cities/kaunas.jpg": {
     "mtime": 1793960840.9316576,
@@ -118,5 +118,35 @@
     "seen": 1794237868.2617762,
     "ast_hash": "1278ea78da8df9808e25495d83d507b7",
     "semantic_hash": "1278ea78da8df9808e25495d83d507b7"
+  },
+  "src/LietuvaTravel_nov12_additional_checks.php": {
+    "mtime": 1794483048.240236,
+    "seen": 1794483107.0354462,
+    "ast_hash": "73d9c8f5fa7bef31e8f2e1a74fe9b697",
+    "semantic_hash": ""
+  },
+  "lietuva-travel-landing/index.html": {
+    "mtime": 1794248655.117335,
+    "seen": 1794483107.035486,
+    "ast_hash": "ab33ccd5401929c7f76876ebf835f8a6",
+    "semantic_hash": ""
+  },
+  "lietuva-travel-landing/img/kaunas.jpg": {
+    "mtime": 1794248615.6364956,
+    "seen": 1794483107.0354955,
+    "ast_hash": "e192e03dd14572e60dede589442a47c5",
+    "semantic_hash": ""
+  },
+  "lietuva-travel-landing/img/klaipeda.jpg": {
+    "mtime": 1794248615.649488,
+    "seen": 1794483107.0354977,
+    "ast_hash": "c4282b8f7538e629847e99b4d02d65d2",
+    "semantic_hash": ""
+  },
+  "lietuva-travel-landing/img/vilnius.jpg": {
+    "mtime": 1794248615.6245027,
+    "seen": 1794483107.0354998,
+    "ast_hash": "71b8643205019ed39d13761b171bc010",
+    "semantic_hash": ""
   }
 }

@@ -105,7 +105,8 @@ final class RouteList implements Functor {
      */
     public static function headOption(self $list): Option {
         $items = $list->getItems();
-        return empty($items) ? new None() : new Some($items[0]);
+        // First item by position, not key 0: keyed/sparse arrays are valid RouteList input.
+        return empty($items) ? new None() : new Some($items[array_key_first($items)]);
     }
 
     public function pickCheapest(callable $comparator): Option {
@@ -149,14 +150,12 @@ final class TripMetrics implements Monoid {
         );
     }
 
-    // Keeps non-colliding keys (e.g. identity's []) intact instead of array_merge's
-    // blanket renumbering; only reindexes on an actual integer-key collision.
+    // Identity's [] leaves the other side untouched (keeps sparse keys); otherwise
+    // array_merge, which is associative (int keys renumbered in order, string keys last-wins).
     private static function mergeItems(array $a, array $b): array {
-        $merged = $a;
-        foreach ($b as $k => $v) {
-            (is_int($k) && array_key_exists($k, $merged)) ? $merged[] = $v : $merged[$k] = $v;
-        }
-        return $merged;
+        if ($a === []) return $b;
+        if ($b === []) return $a;
+        return array_merge($a, $b);
     }
 
     public static function fold(array $list): self {
@@ -382,6 +381,11 @@ final class Itinerary {
         if ($graphEdge !== null && $stepMetrics !== null && $stepMetrics != $graphEdge->weight) {
             throw new InvalidArgumentException("Step metrics must match the traversed edge's weight.");
         }
+        // Metrics only change by traversing an edge, so itinerary metrics == M(inducedPath).
+        if ($graphEdge === null && $stepMetrics !== null) {
+            throw new InvalidArgumentException("A metric-changing step requires a graphEdge.");
+        }
+        $stepMetrics ??= $graphEdge?->weight;
 
         $newMetrics = $stepMetrics ? $this->metrics->append($stepMetrics) : $this->metrics;
         $newTrace = $this->trace;
