@@ -1,4 +1,4 @@
-graphify-out/cache/
+graphify-out/
 doc/*.aux
 doc/*.log
 doc/*.out
