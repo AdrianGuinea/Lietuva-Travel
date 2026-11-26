@@ -1,7 +1,7 @@
-# Graph Report - Adrian.Guinea  (2026-11-12)
+# Graph Report - Adrian.Guinea  (2026-11-26)
 
 ## Corpus Check
-- 10 files · ~20,794 words
+- 10 files · ~20,069 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 17 file(s) not represented in the graph (top: .tex 11, (none) 3, .sty 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0d50afaf`
+- Built from commit: `89a3c681`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,8 +42,8 @@
 5. `Right` - 16 edges
 6. `Some` - 14 edges
 7. `Left` - 14 edges
-8. `GraphNode` - 13 edges
-9. `Flight` - 13 edges
+8. `Flight` - 13 edges
+9. `GraphNode` - 13 edges
 10. `Itinerary` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -51,11 +51,11 @@
   README.md → bin/EJECUCION.txt
 - `{closure#14}()` --calls--> `Right`  [INFERRED]
   src/index.php → src/CategoryTheory.php
+- `{closure#18}()` --calls--> `Left`  [INFERRED]
+  src/index.php → src/CategoryTheory.php
 - `{closure#18}()` --calls--> `Right`  [INFERRED]
   src/index.php → src/CategoryTheory.php
-- `{closure#19}()` --calls--> `Right`  [INFERRED]
-  src/index.php → src/CategoryTheory.php
-- `{closure#21}()` --calls--> `Right`  [INFERRED]
+- `{closure#19}()` --calls--> `Left`  [INFERRED]
   src/index.php → src/CategoryTheory.php
 
 ## Import Cycles

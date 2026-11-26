@@ -408,7 +408,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
     <meta name="theme-color" content="#00311f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,400..600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=8.0">
 </head>
 <body>
@@ -416,13 +416,13 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
 
 <header>
     <div class="brand">
-        <h1><span class="flag" aria-hidden="true"></span><?= htmlspecialchars(t('brand_name')) ?> <span class="version-badge">v6.2 Graph Inductor</span></h1>
+        <h1><span class="flag" aria-hidden="true"></span><?= htmlspecialchars(t('brand_name')) ?></h1>
         <p><?= htmlspecialchars(t('brand_subtitle')) ?></p>
     </div>
     <div class="language-switcher" role="group" aria-label="Language selector">
-        <button type="button" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>" aria-current="<?= $lang === 'en' ? 'true' : 'false' ?>" onclick="changeLanguage('en')">🇬🇧 EN</button>
-        <button type="button" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>" aria-current="<?= $lang === 'es' ? 'true' : 'false' ?>" onclick="changeLanguage('es')">🇪🇸 ES</button>
-        <button type="button" class="lang-btn <?= $lang === 'lt' ? 'active' : '' ?>" aria-current="<?= $lang === 'lt' ? 'true' : 'false' ?>" onclick="changeLanguage('lt')">🇱🇹 LT</button>
+        <button type="button" class="lang-btn <?= $lang === 'en' ? 'active' : '' ?>" aria-current="<?= $lang === 'en' ? 'true' : 'false' ?>" onclick="changeLanguage('en')">EN</button>
+        <button type="button" class="lang-btn <?= $lang === 'es' ? 'active' : '' ?>" aria-current="<?= $lang === 'es' ? 'true' : 'false' ?>" onclick="changeLanguage('es')">ES</button>
+        <button type="button" class="lang-btn <?= $lang === 'lt' ? 'active' : '' ?>" aria-current="<?= $lang === 'lt' ? 'true' : 'false' ?>" onclick="changeLanguage('lt')">LT</button>
     </div>
 </header>
 
@@ -432,11 +432,11 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
         <strong><?= htmlspecialchars(t('live_weather', ['city' => $city])) ?></strong>
         <span><?= htmlspecialchars($liveWeather['temp']) ?></span>
         <span><?= htmlspecialchars(t('live_wind', ['wind' => $liveWeather['wind']])) ?></span>
-        <span class="live-chip"><?= $liveWeather['condition'] === 'Rainy' ? '🌧️' : '☀️' ?> <?= htmlspecialchars($liveCondTranslated) ?></span>
+        <span class="live-chip"><?= htmlspecialchars($liveCondTranslated) ?></span>
         <em><?= htmlspecialchars(t('live_source', ['source' => $liveWeather['source']])) ?></em>
     </div>
     <div class="live-item">
-        <strong>💱 <?= htmlspecialchars(t('currency_exchange')) ?></strong>
+        <strong><?= htmlspecialchars(t('currency_exchange')) ?></strong>
         <span><?= htmlspecialchars(t('currency_rate', ['rate' => (string)$fx['rate'], 'currency' => $currency])) ?></span>
     </div>
 </div>
@@ -448,7 +448,7 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
     <div class="panel">
         <!-- PROFESSOR GRINIS QUICK DEMO & FORMAL VERIFICATION BAR -->
         <div class="demo-bar">
-            <strong style="font-size:0.84rem; color:var(--green-deep);"><?= htmlspecialchars(t('demo_bar_title')) ?></strong>
+            <strong style="font-size:0.875rem; font-weight:500; color:var(--ink);"><?= htmlspecialchars(t('demo_bar_title')) ?></strong>
             <div class="demo-actions">
                 <button type="button" class="preset-btn" onclick="loadScenario('Vilnius','ALL','FL-BER-VNO','HT-NERIS','ACT-CEPELINAI','Sunny',650)"><?= htmlspecialchars(t('preset_valid')) ?></button>
                 <button type="button" class="preset-btn" onclick="loadScenario('Vilnius','ALL','FL-LTN-VNO','HT-ARBATA','ACT-CEPELINAI','Sunny',650)"><?= htmlspecialchars(t('preset_late_flight')) ?></button>
@@ -558,7 +558,6 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <div class="choice-card photo-card <?= $flightId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('flight_id', 'AUTO')">
                 <input type="radio" name="flight_id" value="AUTO" <?= $flightId === 'AUTO' ? 'checked' : '' ?>>
                 <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
-                    <span class="card-thumb-icon" aria-hidden="true">✨</span>
                 </div>
                 <div class="card-select-area">
                     <span class="cheapest-ribbon"><?= htmlspecialchars(t('auto_select')) ?></span>
@@ -577,7 +576,6 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                     <input type="radio" name="flight_id" value="<?= $f->id ?>" <?= $flightId === $f->id ? 'checked' : '' ?>>
                     <div class="card-select-area" onclick="selectRadio('flight_id', '<?= $f->id ?>')">
                         <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
-                            <span class="card-thumb-icon" aria-hidden="true"><?= $f->icon ?></span>
                             <?php if ($idx === 0): ?>
                                 <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('cheapest_flight_ribbon')) ?></span>
                             <?php else: ?>
@@ -631,7 +629,6 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <div class="choice-card photo-card <?= $hotelId === 'AUTO' ? 'selected' : '' ?>" onclick="selectRadio('hotel_id', 'AUTO')">
                 <input type="radio" name="hotel_id" value="AUTO" <?= $hotelId === 'AUTO' ? 'checked' : '' ?>>
                 <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
-                    <span class="card-thumb-icon" aria-hidden="true">✨</span>
                 </div>
                 <div class="card-select-area">
                     <span class="cheapest-ribbon"><?= htmlspecialchars(t('auto_select')) ?></span>
@@ -650,7 +647,6 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                     <input type="radio" name="hotel_id" value="<?= $h->id ?>" <?= $hotelId === $h->id ? 'checked' : '' ?>>
                     <div class="card-select-area" onclick="selectRadio('hotel_id', '<?= $h->id ?>')">
                         <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
-                            <span class="card-thumb-icon" aria-hidden="true"><?= $h->icon ?></span>
                             <?php if ($idx === 0): ?>
                                 <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('cheapest_hotel_ribbon')) ?></span>
                             <?php else: ?>
@@ -706,7 +702,6 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
                     <label class="card-select-area" style="display:block;">
                         <input type="checkbox" name="activity_ids[]" value="<?= $act->id ?>" <?= $checked ? 'checked' : '' ?> onchange="submitForm()">
                         <div class="card-thumb" style="background-image:url('img/cities/<?= $cityPhoto ?>_thumb.jpg');">
-                            <span class="card-thumb-icon" aria-hidden="true"><?= $act->icon ?></span>
                             <?php if ($idx === 0): ?>
                                 <span class="cheapest-ribbon thumb-ribbon"><?= htmlspecialchars(t('featured_activity_ribbon')) ?></span>
                             <?php endif; ?>
@@ -782,8 +777,8 @@ $liveCondTranslated = t('condition_' . $liveWeather['condition']);
             <div class="pass-tear" aria-hidden="true"></div>
 
             <div class="ticket-ok">
-                <div style="font-weight:700; color:#065f46;"><?= htmlspecialchars(t('itinerary_ok')) ?></div>
-                <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#047857;">
+                <div style="font-weight:600; color:var(--green-deep);"><?= htmlspecialchars(t('itinerary_ok')) ?></div>
+                <p style="margin:4px 0 0; font-size:0.875rem; color:var(--muted);">
                     <?= htmlspecialchars(t('itinerary_ok_text')) ?>
                 </p>
             </div>

@@ -1,7 +1,7 @@
 {
   "src/CategoryTheory.php": {
-    "mtime": 1794483082.8646698,
-    "seen": 1794483107.0354323,
+    "mtime": 1794483419.8762236,
+    "seen": 1795699344.8096976,
     "ast_hash": "216ee9075f51315ac421ed2b8716d6dc",
     "semantic_hash": ""
   },
@@ -18,10 +18,10 @@
     "semantic_hash": "c97399cbf02a3adfed628158e680b008"
   },
   "src/index.php": {
-    "mtime": 1794237189.931152,
-    "seen": 1794237868.2616851,
-    "ast_hash": "4ea413054ca46c66459363ead4588a20",
-    "semantic_hash": "4ea413054ca46c66459363ead4588a20"
+    "mtime": 1795699244.27041,
+    "seen": 1795699344.8097205,
+    "ast_hash": "9cf51496f47b3ae3dfdc03762d40c835",
+    "semantic_hash": ""
   },
   "src/js/main.js": {
     "mtime": 1792313513.0,
@@ -30,22 +30,22 @@
     "semantic_hash": "d0f3e318bd3cbfe01d58e8d4d865139e"
   },
   "src/lang/en.php": {
-    "mtime": 1793961810.9616096,
-    "seen": 1794237868.2617006,
-    "ast_hash": "bb308780f2afa3f7220e851868324a41",
-    "semantic_hash": "bb308780f2afa3f7220e851868324a41"
+    "mtime": 1795699241.2010362,
+    "seen": 1795699344.8097265,
+    "ast_hash": "1394644bcdb259b868a3dfc4c4eba121",
+    "semantic_hash": ""
   },
   "src/lang/es.php": {
-    "mtime": 1793961815.0152316,
-    "seen": 1794237868.2617064,
-    "ast_hash": "3bb08b198f834952d4a84cb8cdea3b20",
-    "semantic_hash": "3bb08b198f834952d4a84cb8cdea3b20"
+    "mtime": 1795699241.2026272,
+    "seen": 1795699344.8097281,
+    "ast_hash": "c427aa6716dca836a606475bb11109df",
+    "semantic_hash": ""
   },
   "src/lang/lt.php": {
-    "mtime": 1793961819.1757908,
-    "seen": 1794237868.2617111,
-    "ast_hash": "ae23386c318661487e03f1fb127449b3",
-    "semantic_hash": "ae23386c318661487e03f1fb127449b3"
+    "mtime": 1795699241.2042308,
+    "seen": 1795699344.80973,
+    "ast_hash": "5ceb6e31c397ffcca828521e2f0459c5",
+    "semantic_hash": ""
   },
   "src/tests/category_laws_test.php": {
     "mtime": 1794237197.8934813,
@@ -120,15 +120,15 @@
     "semantic_hash": "1278ea78da8df9808e25495d83d507b7"
   },
   "src/LietuvaTravel_nov12_additional_checks.php": {
-    "mtime": 1794483048.240236,
-    "seen": 1794483107.0354462,
+    "mtime": 1794483419.8762236,
+    "seen": 1795699344.809709,
     "ast_hash": "73d9c8f5fa7bef31e8f2e1a74fe9b697",
     "semantic_hash": ""
   },
   "lietuva-travel-landing/index.html": {
-    "mtime": 1794248655.117335,
-    "seen": 1794483107.035486,
-    "ast_hash": "ab33ccd5401929c7f76876ebf835f8a6",
+    "mtime": 1795699325.90584,
+    "seen": 1795699344.8097408,
+    "ast_hash": "f24c055c0349f01414930da995b94957",
     "semantic_hash": ""
   },
   "lietuva-travel-landing/img/kaunas.jpg": {

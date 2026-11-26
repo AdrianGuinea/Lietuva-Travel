@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lietuva Travel · Plan Lithuania, one valid step at a time</title>
+<meta name="description" content="Plan your trip to Vilnius, Kaunas and Klaipėda with flights, stays and experiences, validated step by step with Category Theory." />
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=Inter:wght@400;500&display=swap" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      fontFamily: {
+        serif: ['"DM Serif Display"', 'serif'],
+        sans: ['"DM Sans"', 'sans-serif'],
+        ui: ['Inter', 'sans-serif']
+      },
+      extend: {
+        colors: {
+          paper: '#e8edea',
+          card: '#ffffff',
+          ink: '#10231c',
+          muted: '#5a6b62',
+          line: '#d3dcd6',
+          forest: '#00311f',
+          lt: '#006A44',
+          mint: '#e5f2eb',
+          gold: '#FDB913',
+          amber: '#fff3cc',
+          redlt: '#C1272D',
+          redtint: '#fdecea',
+          baltic: '#0b5d78'
+        }
+      }
+    }
+  };
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+<style>
+  html, body {
+    font-family: "DM Sans", sans-serif;
+    background: #e8edea;
+    color: #10231c;
+  }
+  body { font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  ::selection { background: #006A44; color: #ffffff; }
+  button, input, select, textarea, nav a { font-family: Inter, sans-serif; }
+
+  /* ---- Type roles (from the prompt) ---- */
+  .h-hero {
+    font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-size: clamp(56px, 8.5vw, 150px);
+    line-height: .95;
+    letter-spacing: -.02em;
+  }
+  .h-sec {
+    font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 80px);
+    line-height: 1.02;
+    letter-spacing: -.01em;
+  }
+  .h-card {
+    font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-size: clamp(26px, 2.4vw, 34px);
+    line-height: 1.1;
+  }
+  .num-serif {
+    font-family: "DM Serif Display", serif;
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 80px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .ui {
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+  .body-copy { font-family: "DM Sans", sans-serif; font-size: 17px; line-height: 1.6; color: rgba(16, 35, 28, .65); }
+  .body-copy.sm { font-size: 16px; }
+
+  /* ---- Clipped upward reveal ---- */
+  .line { display: block; overflow: hidden; padding-bottom: .08em; }
+  .line > span { display: block; }
+
+  /* ---- Nav ---- */
+
+  /* ---- Hero ---- */
+  .hero-word { display: inline-block; transform-origin: left bottom; }
+  .hero-photo {
+    display: inline-block; vertical-align: middle;
+    height: .78em; width: 1.6em; border-radius: .39em; overflow: hidden;
+    margin: 0 .12em; position: relative; top: -.04em;
+    background: url("img/klaipeda.jpg") center 45% / cover no-repeat;
+  }
+
+  /* ---- Process ---- */
+  .step-card { background: #ffffff; border: 1px solid #d3dcd6; }
+
+  /* ---- Destinations ---- */
+  .dest-card { background: #ffffff; border: 1px solid #d3dcd6; }
+  .dest-img { background-size: cover; background-position: center; }
+
+</style>
+</head>
+
+<body class="bg-paper text-ink">
+
+<!-- ================= NAV ================= -->
+<header class="absolute inset-x-0 top-0 z-50 text-white">
+  <div class="flex items-center justify-between px-6 py-5 md:px-12">
+    <a href="#top" class="ui flex items-center gap-3 text-[13px]">
+      <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#FDB913]"></span>Lietuva Travel
+    </a>
+    <nav class="hidden items-center gap-10 md:flex" aria-label="Main">
+      <a href="#process" class="ui">Process</a>
+      <a href="#destinations" class="ui">Destinations</a>
+      <a href="#stats" class="ui">Results</a>
+      <a href="#plan" class="ui">Plan</a>
+    </nav>
+    <a href="../src/index.php" class="ui rounded-lg border border-white/60 px-4 py-2.5 transition-colors hover:bg-white hover:text-forest">Open app</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HERO ================= -->
+<section id="top" class="relative flex min-h-svh items-end overflow-hidden bg-forest text-white">
+  <div class="absolute inset-0">
+    <div class="absolute inset-0">
+      <img src="img/vilnius.jpg" alt="Baroque Old Town of Vilnius" class="absolute inset-0 h-full w-full object-cover" style="object-position: center 60%; filter: contrast(1.08) saturate(.9);" />
+    </div>
+  </div>
+  <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(0,49,31,.5) 0%, rgba(0,49,31,.08) 35%, rgba(0,49,31,.85) 100%);"></div>
+
+  <div class="relative z-10 w-full px-6 pb-16 pt-40 md:px-12 md:pb-24">
+    <div class="ui mb-8 flex items-center gap-3 text-gold">
+      <i data-lucide="map-pin" class="h-4 w-4" stroke-width="1.5"></i> Vilnius · Kaunas · Klaipėda
+    </div>
+    <h1 class="h-hero max-w-[18ch]">
+      <span class="hero-word">Plan</span>
+      <span class="hero-word">Lithuania,</span>
+      <span class="hero-photo hero-word" aria-hidden="true"></span>
+      <span class="hero-word">one</span>
+      <span class="hero-word">valid</span>
+      <span class="hero-word">step</span>
+      <span class="hero-word">at</span>
+      <span class="hero-word">a</span>
+      <span class="hero-word">time</span>
+    </h1>
+    <div class="mt-12 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+      <p class="body-copy max-w-md" style="color: rgba(255,255,255,.82);">Flights, stays and experiences combined into one itinerary. Every step is checked for timing, weather and budget before you book.</p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#destinations" class="ui inline-flex items-center gap-3 rounded-lg bg-gold px-6 py-4 text-forest transition-colors hover:bg-[#f2ad00]">Explore destinations <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+        <a href="#process" class="ui inline-flex items-center gap-3 rounded-lg border border-white/60 px-6 py-4 transition-colors hover:bg-white/10">How it works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUOTE / APPROACH ================= -->
+<section class="px-6 py-32 md:px-12 md:py-44">
+  <div class="grid grid-cols-12 gap-x-6 gap-y-16">
+    <div class="col-span-12 lg:col-span-8">
+      <div class="ui mb-10 flex items-center gap-3 text-lt"><span class="h-px w-10 bg-lt"></span> Our approach</div>
+      <h2 class="h-sec">
+        <span class="line"><span>Itineraries built like proofs,</span></span>
+        <span class="line"><span>not <span class="text-lt">guesses</span></span></span>
+      </h2>
+    </div>
+    <div class="col-span-12 lg:col-span-4 lg:pt-20">
+      <div class="ui mb-6 text-lt">Built on Category Theory</div>
+      <ul class="space-y-6">
+        <li class="line"><span class="border-t border-ink/15 pt-5 text-[18px]">Free category graph <span class="body-copy sm block">Each step is a valid, composable edge</span></span></li>
+        <li class="line"><span class="border-t border-ink/15 pt-5 text-[18px]">Functors <span class="body-copy sm block">One discount applied to every provider</span></span></li>
+        <li class="line"><span class="border-t border-ink/15 pt-5 text-[18px]">Monads <span class="body-copy sm block">Invalid steps stop with a clear reason</span></span></li>
+        <li class="line"><span class="border-t border-ink/15 pt-5 text-[18px]">Monoids <span class="body-copy sm block">Costs and durations combine associatively</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section id="stats" class="relative isolate overflow-hidden px-6 py-32 text-white md:px-12 md:py-40">
+  <img src="img/kaunas.jpg" alt="" aria-hidden="true" class="absolute inset-0 -z-20 h-full w-full object-cover" />
+  <div class="absolute inset-0 -z-10 bg-forest/75"></div>
+
+  <div class="grid gap-12 md:grid-cols-4 md:gap-8">
+    <div>
+      <div class="num-serif"><span data-count="3">3</span></div>
+      <div class="ui mt-4 text-white/80">Cities</div>
+    </div>
+    <div>
+      <div class="num-serif"><span data-count="9">9</span></div>
+      <div class="ui mt-4 text-white/80">Origin airports</div>
+    </div>
+    <div>
+      <div class="num-serif"><span data-count="8">8</span></div>
+      <div class="ui mt-4 text-white/80">Stays</div>
+    </div>
+    <div>
+      <div class="num-serif"><span data-count="18">18</span></div>
+      <div class="ui mt-4 text-white/80">Category laws verified</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section id="process" class="grid gap-16 px-6 py-32 md:grid-cols-12 md:px-12 md:py-44">
+  <div class="md:sticky md:top-32 md:col-span-5 md:h-fit">
+    <div class="ui mb-8 flex items-center gap-3 text-lt"><span class="h-px w-10 bg-lt"></span> Process</div>
+    <h2 class="h-sec">From first flight to final check</h2>
+    <p class="body-copy mt-8 max-w-md">Each stage runs its own rule. If one fails, the app shows the reason and a fix before you pay.</p>
+  </div>
+
+  <div class="space-y-8 md:col-span-6 md:col-start-7">
+    <article class="step-card relative rounded-2xl p-8 md:p-10">
+      <div>
+        <div class="ui mb-6 flex items-center gap-3 text-lt"><i data-lucide="plane" class="h-5 w-5" stroke-width="1.5"></i> Step 01</div>
+        <h3 class="h-card">Choose your flight</h3>
+        <p class="body-copy mt-4 max-w-md">Pick from nine origin airports. The cheapest fare is found and a 15% student discount applies if you hold an ISIC card.</p>
+      </div>
+    </article>
+
+    <article class="step-card relative rounded-2xl p-8 md:ml-16 md:p-10">
+      <div class="ui mb-6 flex items-center gap-3 text-lt"><i data-lucide="bed-double" class="h-5 w-5" stroke-width="1.5"></i> Step 02</div>
+      <h3 class="h-card">Match your stay</h3>
+      <p class="body-copy mt-4 max-w-md">Your arrival time is checked against each hotel's check-in cut-off. Late arrivals only see stays with 24-hour reception.</p>
+    </article>
+
+    <article class="step-card relative rounded-2xl p-8 md:p-10">
+      <div class="ui mb-6 flex items-center gap-3 text-lt"><i data-lucide="cloud-sun" class="h-5 w-5" stroke-width="1.5"></i> Step 03</div>
+      <h3 class="h-card">Add experiences</h3>
+      <p class="body-copy mt-4 max-w-md">Outdoor activities need clear skies. Live weather for each city decides which tours you can add to the day.</p>
+    </article>
+
+    <article class="step-card relative rounded-2xl p-8 md:ml-16 md:p-10">
+      <div class="ui mb-6 flex items-center gap-3 text-lt"><i data-lucide="badge-euro" class="h-5 w-5" stroke-width="1.5"></i> Step 04</div>
+      <h3 class="h-card">Stay within budget</h3>
+      <p class="body-copy mt-4 max-w-md">Your total is summed across flights, nights and activities. If you go over, the app suggests a fix before you book.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= DESTINATIONS (pinned horizontal) ================= -->
+<section class="px-6 md:px-12">
+  <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <h2 class="h-sec max-w-3xl">Three cities, one coastline</h2>
+    <p class="body-copy max-w-sm">Baroque streets, modernist Kaunas and the Baltic shore, all reachable by train or bus.</p>
+  </div>
+</section>
+
+<section id="destinations" class="px-6 pb-32 pt-16 md:px-12 md:pb-44">
+  <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="dest-wrap">
+      <div class="dest-card h-full rounded-2xl p-5">
+        <div class="dest-img aspect-[4/3] w-full rounded-lg" style="background-image: url('img/vilnius.jpg');"></div>
+        <div class="ui mt-6 text-lt">Baroque Old Town &amp; Trakai</div>
+        <h3 class="h-card mt-2">Vilnius</h3>
+        <p class="body-copy sm mt-3">Three stays, from a 5★ baroque palace to a guest house. Balloon flights over Trakai Castle at sunrise.</p>
+        <a href="../src/index.php" class="ui mt-6 inline-flex items-center gap-2 border-b border-ink/30 pb-1">Plan Vilnius <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+      </div>
+    </article>
+    <article class="dest-wrap">
+      <div class="dest-card h-full rounded-2xl p-5">
+        <div class="dest-img aspect-[4/3] w-full rounded-lg" style="background-image: url('img/kaunas.jpg');"></div>
+        <div class="ui mt-6 text-lt">UNESCO Modernism &amp; Rivers</div>
+        <h3 class="h-card mt-2">Kaunas</h3>
+        <p class="body-copy sm mt-3">Interwar modernism between two rivers. Two boutique stays and a sunset sail on the reservoir.</p>
+        <a href="../src/index.php" class="ui mt-6 inline-flex items-center gap-2 border-b border-ink/30 pb-1">Plan Kaunas <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+      </div>
+    </article>
+    <article class="dest-wrap">
+      <div class="dest-card h-full rounded-2xl p-5">
+        <div class="dest-img aspect-[4/3] w-full rounded-lg" style="background-image: url('img/klaipeda.jpg');"></div>
+        <div class="ui mt-6 text-lt">Baltic Coast &amp; Amber</div>
+        <h3 class="h-card mt-2">Klaipėda</h3>
+        <p class="body-copy sm mt-3">Harbour city with amber workshops, a maritime museum and three sea-view stays.</p>
+        <a href="../src/index.php" class="ui mt-6 inline-flex items-center gap-2 border-b border-ink/30 pb-1">Plan Klaipėda <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+      </div>
+    </article>
+    <article class="dest-wrap">
+      <div class="dest-card h-full rounded-2xl p-5">
+        <div class="ui text-lt">Dunes &amp; lagoon</div>
+        <h3 class="h-card mt-2">Curonian Spit</h3>
+        <p class="body-copy sm mt-3">UNESCO grey dunes reached from Klaipėda. Lagoon kayak tours run for five hours.</p>
+        <a href="../src/index.php" class="ui mt-6 inline-flex items-center gap-2 border-b border-ink/30 pb-1">Plan the spit <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= PLAN / CTA ================= -->
+<section id="plan" class="grid gap-16 px-6 py-32 md:grid-cols-12 md:px-12 md:py-44">
+  <div class="md:col-span-5">
+    <div class="ui mb-8 flex items-center gap-3 text-lt"><span class="h-px w-10 bg-lt"></span> Plan</div>
+    <h2 class="h-sec">Start your itinerary</h2>
+    <p class="body-copy mt-8 max-w-md">Choose an origin, dates and stays. The configurator validates every edge and shows a boarding-pass style summary.</p>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href="../src/index.php" class="ui inline-flex items-center gap-3 rounded-lg bg-lt px-7 py-4 text-white transition-colors hover:bg-forest">Open the configurator <i data-lucide="arrow-right" class="h-4 w-4" stroke-width="1.5"></i></a>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-line bg-card md:col-span-6 md:col-start-7">
+    <div class="flex items-center justify-between gap-4 border-b border-line p-6 md:p-7">
+      <div>
+        <div class="ui text-lt">Student discount</div>
+        <p class="body-copy sm mt-1">15% off flight fares with an ISIC card</p>
+      </div>
+      <div class="ui text-[13px] text-ink">15%</div>
+    </div>
+    <div class="flex items-center justify-between gap-4 border-b border-line p-6 md:p-7">
+      <div>
+        <div class="ui text-lt">Languages</div>
+        <p class="body-copy sm mt-1">English, Spanish and Lithuanian</p>
+      </div>
+      <div class="ui text-[13px] text-ink">EN · ES · LT</div>
+    </div>
+    <div class="flex items-center justify-between gap-4 p-6 md:p-7">
+      <div>
+        <div class="ui text-lt">Prices</div>
+        <p class="body-copy sm mt-1">Reference prices; the live fare is on the provider's site</p>
+      </div>
+      <div class="ui text-[13px] text-ink">Ref.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="border-t border-line px-6 py-12 md:px-12">
+  <div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+    <div class="h-sec text-[clamp(36px,4vw,56px)]">Lietuva Travel</div>
+    <nav class="flex flex-wrap gap-8" aria-label="Footer">
+      <a href="#process" class="ui">Process</a>
+      <a href="#destinations" class="ui">Destinations</a>
+      <a href="#plan" class="ui">Plan</a>
+    </nav>
+  </div>
+  <div class="mt-10 grid gap-2 md:grid-cols-2">
+    <p class="body-copy sm">Semester Project — Category Theory applied to Software Engineering</p>
+    <p class="body-copy sm md:text-right">Author: Adrián Guinea Pérez · Academic supervisor: Prof. I. Grinis</p>
+    <p class="body-copy sm">Built for educational purposes. Prices are illustrative, not live booking data.</p>
+    <p class="body-copy sm md:text-right">&copy; 2026 Lietuva Travel</p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduced || !window.gsap || !window.ScrollTrigger) return;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* One entrance on load: hero words fade and rise a little, small stagger */
+  gsap.from('.hero-word', { y: 24, opacity: 0, duration: 0.6, stagger: 0.04, ease: 'power3.out', delay: 0.1 });
+
+  /* Counters tween once when they come into view */
+  document.querySelectorAll('[data-count]').forEach((el) => {
+    const obj = { v: 0 };
+    el.textContent = '0';
+    gsap.to(obj, {
+      v: +el.dataset.count, duration: 1.2, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+      onUpdate: () => { el.textContent = Math.round(obj.v); }
+    });
+  });
+})();
+</script>
+</body>
+</html>
